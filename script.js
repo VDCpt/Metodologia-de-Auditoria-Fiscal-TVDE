@@ -30,7 +30,7 @@ function calcularDiscrepancia() {
     // Obter a BTOR (calculada na função anterior)
     const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
     
-    // Obter a Base Tributável Faturada (BTF) da Coluna 3
+    // Obter a Base Tributável Faturada (BTF) da Coluna 2
     const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
     
     // Obter o contexto do mercado (usando Motoristas Ativos)
@@ -39,11 +39,18 @@ function calcularDiscrepancia() {
     // --- CÁLCULO DA DISCREPÂNCIA ---
     const discrepancia = btor - btf;
     
+    // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
+    // Percentagem = (Discrepância / BTOR) * 100
+    let percentagemOmissao = 0;
+    if (btor > 0) {
+        percentagemOmissao = (discrepancia / btor) * 100;
+    }
+    
     // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
     const ivaPotencial = discrepancia * IVA_TAXA;
     
     // --- PROJEÇÃO DE MERCADO ---
-    const omissaoPorMotorista = discrepancia; // Na amostra de um motorista/mês
+    const omissaoPorMotorista = discrepancia; // Omissão da amostra
     
     // Omissão Mensal (Motoristas Ativos * Omissão da Amostra)
     const valorOmitidoMensal = omissaoPorMotorista * motoristasAtivos;
@@ -60,6 +67,9 @@ function calcularDiscrepancia() {
     // Discrepância
     document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
     
+    // Percentagem de Omissão
+    document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
+    
     // IVA Potencial Omitido
     document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
 
@@ -71,7 +81,7 @@ function calcularDiscrepancia() {
     document.getElementById('valorOmitidoAnual').textContent = valorOmitidoAnual.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
 }
 
-// Associar a função de cálculo de discrepância aos inputs relevantes da Coluna 3 e Secção de Auditoria
+// Associar a função de cálculo de discrepância aos inputs relevantes
 document.getElementById('baseTributavelFaturada').addEventListener('input', calcularDiscrepancia);
 document.getElementById('motoristasAtivos').addEventListener('input', calcularDiscrepancia);
 
