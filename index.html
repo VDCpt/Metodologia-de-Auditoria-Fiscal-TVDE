@@ -35,7 +35,7 @@
             margin-top: 30px;
         }
         .column {
-            flex: 1;
+            flex: 0 0 48%; /* Duas colunas com espaço */
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -89,11 +89,34 @@
             border: 1px dashed #d9534f;
             background-color: #fdd;
         }
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+        @media print {
+            .action-button {
+                display: none; /* Não mostrar o botão de impressão no PDF/Impressão */
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="printableArea">
         <h1>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</h1>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
         
@@ -102,11 +125,11 @@
         <div class="header-info">
             <div class="input-group">
                 <label for="mes">Mês da Amostra:</label>
-                <input type="text" id="mes" value="Novembro">
+                <input type="text" id="mes" value="Novembro" oninput="calcularDiscrepancia()">
             </div>
             <div class="input-group">
                 <label for="ano">Ano da Amostra:</label>
-                <input type="number" id="ano" value="2025">
+                <input type="number" id="ano" value="2025" oninput="calcularDiscrepancia()">
             </div>
         </div>
 
@@ -139,11 +162,15 @@
                     <input type="number" id="portagensOperacionais" value="10" oninput="calcularBaseTributavelOperacional()">
                 </div>
                 <div class="input-group">
-                    <label for="taxasReservaOperacionais">Taxas de Reserva (€):</label>
-                    <input type="number" id="taxasReservaOperacionais" value="20" oninput="calcularBaseTributavelOperacional()">
+                    <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (€):</label>
+                    <input type="number" id="taxasReservaOperacionaisBruto" value="20" oninput="calcularBaseTributavelOperacional()">
                 </div>
                 
                 <h4>Deduções operacionais</h4>
+                <div class="input-group">
+                    <label for="taxasReservaDeducoes">Taxas de Reserva (€):</label>
+                    <input type="number" id="taxasReservaDeducoes" value="15" oninput="calcularBaseTributavelOperacional()">
+                </div>
                 <div class="input-group">
                     <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
                     <input type="number" id="comissaoPlataformaOperacionais" value="300" oninput="calcularBaseTributavelOperacional()">
@@ -157,51 +184,7 @@
             </div>
 
             <div class="column">
-                <h3>2. Ganhos da Empresa (Fleet)</h3>
-                
-                <div class="input-group">
-                    <label for="saldoInicial">Saldo Inicial (€):</label>
-                    <input type="number" id="saldoInicial" value="100">
-                </div>
-                <div class="input-group">
-                    <label for="ganhosAppFleet">Ganhos na App (€):</label>
-                    <input type="number" id="ganhosAppFleet" value="1400">
-                </div>
-                <div class="input-group">
-                    <label for="comissaoPlataformaFleet">Comissão da Plataforma (Retida) (€):</label>
-                    <input type="number" id="comissaoPlataformaFleet" value="300">
-                </div>
-                 <div class="input-group">
-                    <label for="taxasBloqueio">Taxas de Bloqueio (€):</label>
-                    <input type="number" id="taxasBloqueio" value="5">
-                </div>
-                <div class="input-group">
-                    <label for="gorjetasPassageiros">Gorjetas dos Passageiros (€):</label>
-                    <input type="number" id="gorjetasPassageiros" value="20">
-                </div>
-                <div class="input-group">
-                    <label for="ganhosCampanhasFleet">Ganhos de Campanhas (€):</label>
-                    <input type="number" id="ganhosCampanhasFleet" value="50">
-                </div>
-                <div class="input-group">
-                    <label for="saldoFinal">Saldo Final (€):</label>
-                    <input type="number" id="saldoFinal" value="120">
-                </div>
-
-                <h4>Resumo</h4>
-                 <div class="result-group">
-                    <label>Pagamento a Dinheiro aos Motoristas (€):</label>
-                    <strong><input type="number" id="pagamentoDinheiroMotoristas" value="1000"></strong>
-                </div>
-            </div>
-
-            <div class="column">
                 <h3>3. Fatura Emitida (Fiscal)</h3>
-                
-                <div class="input-group">
-                    <label for="comissoesRelativasPeriodo">Comissões Relativas ao Período (€):</label>
-                    <input type="number" id="comissoesRelativasPeriodo" value="300" oninput="calcularDiscrepancia()">
-                </div>
                 
                 <div class="input-group">
                     <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
@@ -242,12 +225,12 @@
             </div>
             <div class="input-group">
                 <label for="motoristasAtivos">Motoristas Ativos (Aprox.):</label>
-                <input type="number" id="motoristasAtivos" value="20000" oninput="calcularDiscrepancia()">
+                <input type="number" id="motoristasAtivos" value="36000" oninput="calcularDiscrepancia()">
             </div>
             
             <br>
             
-            <h3>BASE TRIBUTÁVEL</h3>
+            <h3>BASE TRIBUTÁVEL (Amostra do Mês)</h3>
             <div class="result-group">
                 <label>Total Base Tributável Operacional Retida (BTOR):</label>
                 <strong id="btorFinal">0.00 €</strong>
@@ -269,8 +252,15 @@
                 <strong id="ivaPotencialResultado">0.00 €</strong>
             </div>
             
-            <p>Se esta omissão (<span id="omissaoPorViatura">0.00 €</span>) fosse a média mensal por Viaturas Ativas (<span id="viaturasAtivasContexto">10.000</span>), o potencial valor omitido em todo o mercado seria de <strong id="valorOmitidoMercado">0.00 €</strong>.</p>
+            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">36.000</span>), o potencial valor omitido seria vasto:</p>
+            
+            <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0.00 €</strong></p>
+            <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0.00 €</strong></p>
+
         </div>
+        
+        <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF</button>
+
     </div>
 
     <script src="script.js"></script>
