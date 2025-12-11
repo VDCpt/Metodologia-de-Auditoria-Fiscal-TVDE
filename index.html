@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prova de Autenticação - Auditoria Fiscal TVDE (VDC)</title>
     <style>
-        /* [ESTILOS ANTERIORES MANTIDOS] */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding: 0; }
-        .container { max-width: 1200px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .container { max-width: 1000px; /* Ajuste para aumentar densidade da 1ª página */ margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #d93025; border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 30px; }
         h2 { color: #1a73e8; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         
@@ -21,6 +20,10 @@
         label { display: block; font-weight: 600; margin-top: 10px; margin-bottom: 3px; color: #333; }
         input[type="number"], input[type="text"] { width: calc(100% - 10px); padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         
+        /* Secção Adicional para Dados Oficiais */
+        #dados-oficiais { margin-top: 30px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 6px; }
+        .estatisticas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
         /* Resultados e Discrepância */
         .resultado-group { margin-top: 30px; padding: 20px; border: 2px solid #ccc; border-radius: 8px; }
         .discrepancia-box { background-color: #ffe6e6; border-color: #d93025; font-size: 1.1em; font-weight: bold; padding: 20px; margin-top: 15px; border-radius: 6px; }
@@ -38,9 +41,10 @@
             body { background: white; }
             .container { box-shadow: none; margin: 0; padding: 0; }
             .button-group, .legal-note { display: none; }
+            .input-sections, #dados-oficiais, .resultado-group { page-break-inside: avoid; } /* Evita quebras no meio das secções */
             .input-sections { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
             input[type="number"], input[type="text"] { border: none; border-bottom: 1px dotted #333; padding: 5px 0; margin-bottom: 5px; }
-            .section-box, .resultado-group { border: 1px solid #ccc; page-break-inside: avoid; }
+            .section-box, .resultado-group { border: 1px solid #ccc; }
             .discrepancia-box { background-color: #fce4e4 !important; color: #d93025 !important; print-color-adjust: exact; border: 2px solid #d93025; }
         }
     </style>
@@ -49,7 +53,7 @@
     <div class="container">
         <h1>PROVA DE AUTENTICAÇÃO - Metodologia de Auditoria Fiscal TVDE (VDC)</h1>
         <p style="text-align: center; font-style: italic;">
-            Modelo de Análise Detalhada (Máx. 12 Meses) para comparação de Retenções Operacionais vs. Faturação Fiscal.
+            Modelo de Análise Detalhada para comparação de Retenções Operacionais vs. Faturação Fiscal.
         </p>
 
         <div class="input-sections">
@@ -107,6 +111,7 @@
                 
                 <label style="color: #1a73e8;">Taxas De Reserva (Bruto)</label>
                 <input type="number" id="a_taxasReservaBruto" value="0.00" step="0.01">
+
                 <hr style="margin-top: 20px;">
                 
                 <label style="color: #d93025;">**DEDUÇÕES OPERACIONAIS**</label>
@@ -140,11 +145,25 @@
             </div>
 
         </div>
+        
+        <div id="dados-oficiais">
+            <h2>4. Últimos Dados Oficiais (Contexto de Mercado)</h2>
+            <div class="estatisticas-grid">
+                <div>
+                    <label>Viaturas Inscritas Ativas (Aproximadamente)</label>
+                    <input type="number" id="viaturasAtivas" value="0" step="1">
+                </div>
+                <div>
+                    <label>Motoristas Inscritos Ativos (Aproximadamente)</label>
+                    <input type="number" id="motoristasAtivos" value="0" step="1">
+                </div>
+            </div>
+        </div>
 
         <div class="resultado-group">
-            <h2>4. Resultado da Auditoria e Discrepância Fiscal</h2>
+            <h2>5. Resultado da Auditoria e Discrepância Fiscal</h2>
             <div id="resultadoCalculo">
-                <p>Clique em 'Calcular Discrepância' para comparar as retenções operacionais com a fatura emitida.</p>
+                <p>Clique em 'Calcular Discrepância' para iniciar a auditoria.</p>
             </div>
         </div>
 
@@ -154,7 +173,7 @@
         </div>
 
         <div class="legal-note">
-            **Declaração:** Os dados inseridos e a análise resultante destinam-se a fins de auditoria interna e jurídica, com base na sua experiência individual e nos documentos da Plataforma.
+            **Declaração:** Os dados inseridos e a análise resultante destinam-se a fins de auditoria interna e jurídica.
         </div>
     </div>
 
