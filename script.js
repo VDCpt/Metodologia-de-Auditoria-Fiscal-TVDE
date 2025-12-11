@@ -1,67 +1,84 @@
-// VARIÁVEIS FIXAS (Para a Extrapolação de Litígio)
-const anosOperacao = 7;
+// script.js - Motor de Cálculo para VDC
 
-// Função para formatar números para EUR
+// Constante: Anos de operação para o cálculo total
+const ANOS_OPERACAO = 7;
+const TAXA_IVA = 0.06; // 6% IVA Potencial
+
+// Seleção dos Elementos de Input (Entrada)
+const inputComissaoApp = document.getElementById('comissaoApp');
+const inputFaturaDeclarada = document.getElementById('faturaDeclarada');
+const inputMotoristasAtivos = document.getElementById('motoristasAtivos');
+
+// Seleção dos Elementos de Output (Resultados)
+const displayComissaoDeduzida = document.getElementById('comissaoDeduzidaDisplay');
+const resOperacional = document.getElementById('resOperacional');
+const resFaturada = document.getElementById('resFaturada');
+const resDiscrepancia = document.getElementById('resDiscrepancia');
+const resPercentagem = document.getElementById('resPercentagem');
+const resIvaOmitido = document.getElementById('resIvaOmitido');
+const extrapolacaoAnual = document.getElementById('extrapolacaoAnual');
+const extrapolacaoTotal = document.getElementById('extrapolacaoTotal');
+
+// Função de Formatação de Moeda (EUR)
 const formatarEuro = (valor) => {
-    return valor.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+    return valor.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
 };
 
-// Elementos de Input
-const inputComissaoRetida = document.getElementById('comissaoRetida');
-const inputBaseFaturada = document.getElementById('baseFaturada');
-const inputMotoristasAtivos = document.getElementById('motoristasAtivosInput');
+// Função Principal de Cálculo
+function calcularAuditoria() {
+    // 1. Obter valores dos inputs (converte string para float)
+    const valComissaoApp = parseFloat(inputComissaoApp.value) || 0;
+    const valFaturaDeclarada = parseFloat(inputFaturaDeclarada.value) || 0;
+    const valMotoristas = parseInt(inputMotoristasAtivos.value) || 0;
 
-// Elementos de Output (Discrepância e Extrapolação)
-const omissaoMensalOutput = document.getElementById('omissaoMensal');
-const percentagemOmisaoOutput = document.getElementById('percentagemOmisao');
-const omissaoAnualOutput = document.getElementById('omissao-anual');
-const potencialTotalOutput = document.getElementById('potencial-total');
-const comissaoDeduzidaOutput = document.getElementById('comissaoDeduzida');
+    // 2. Atualizar campos de leitura espelhados
+    displayComissaoDeduzida.value = valComissaoApp.toFixed(2);
+    resOperacional.innerText = formatarEuro(valComissaoApp);
+    resFaturada.innerText = formatarEuro(valFaturaDeclarada);
 
-
-// Função Principal de Cálculo e Renderização
-function calcularDesvio() {
-    // Coleta valores
-    const comissaoRetida = parseFloat(inputComissaoRetida.value) || 0;
-    const baseFaturada = parseFloat(inputBaseFaturada.value) || 0;
-    const motoristasAtivos = parseInt(inputMotoristasAtivos.value) || 0;
-
-    // 1. CÁLCULO DA OMISSÃO MENSAL (€169.64 no seu caso de amostra)
-    const omissaoMensal = comissaoRetida - baseFaturada;
+    // 3. Cálculo da Discrepância (Omissão)
+    const discrepancia = valComissaoApp - valFaturaDeclarada;
     
-    // 2. CÁLCULO DA PERCENTAGEM (Evitar divisão por zero)
-    let percentagemOmisao = 0;
-    if (comissaoRetida > 0) {
-        percentagemOmisao = (omissaoMensal / comissaoRetida) * 100;
+    // 4. Cálculo da Percentagem
+    let percentagem = 0;
+    if (valComissaoApp > 0) {
+        percentagem = (discrepancia / valComissaoApp) * 100;
     }
 
-    // 3. CÁLCULO DA EXTRAPOLAÇÃO (Motorista x Meses x Anos)
-    const omissaoAnual = omissaoMensal * 12 * motoristasAtivos;
-    const potencialTotalLitigio = omissaoAnual * anosOperacao;
+    // 5. Cálculo do IVA Omitido
+    const ivaOmitido = discrepancia * TAXA_IVA;
 
-    // 4. ATUALIZAÇÃO DO HTML
-    omissaoMensalOutput.textContent = formatarEuro(omissaoMensal);
-    percentagemOmisaoOutput.textContent = `${percentagemOmisao.toFixed(2)} %`;
-    omissaoAnualOutput.textContent = formatarEuro(omissaoAnual);
-    potencialTotalOutput.textContent = formatarEuro(potencialTotalLitigio);
+    // 6. Extrapolações (A Magnitude da Fraude)
+    const totalAnual = discrepancia * 12 * valMotoristas;
+    const totalLitigio = totalAnual * ANOS_OPERACAO;
+
+    // 7. Atualizar o DOM (Resultados Visuais)
+    resDiscrepancia.innerText = formatarEuro(discrepancia);
     
-    // Atualiza campo de referência (simplesmente assume que a comissão deduzida é igual à retida, conforme a lógica do Doc 3)
-    comissaoDeduzidaOutput.textContent = formatarEuro(comissaoRetida);
+    // Muda a cor se a discrepância for negativa (erro) ou positiva (fraude)
+    if (discrepancia < 0) {
+        resDiscrepancia.style.color = 'green'; // Sem desvio aparente
+    } else {
+        resDiscrepancia.style.color = '#c62828'; // Vermelho alerta
+    }
+
+    resPercentagem.innerText = percentagem.toFixed(2);
+    resIvaOmitido.innerText = formatarEuro(ivaOmitido);
+    
+    extrapolacaoAnual.innerText = formatarEuro(totalAnual);
+    extrapolacaoTotal.innerText = formatarEuro(totalLitigio);
 }
 
-// Inicializa o Simulador
-function iniciarSimulador() {
-    // Definir valores iniciais da sua amostra (Novembro 2025)
-    inputComissaoRetida.value = '279.54';
-    inputBaseFaturada.value = '110.90';
-    inputMotoristasAtivos.value = '36000';
-    
-    calcularDesvio(); // Renderiza os valores iniciais (€513M)
-    
-    // Adiciona escutadores de eventos para recalcular ao digitar
-    inputComissaoRetida.addEventListener('input', calcularDesvio);
-    inputBaseFaturada.addEventListener('input', calcularDesvio);
-    inputMotoristasAtivos.addEventListener('input', calcularDesvio);
+// Inicialização
+function iniciar() {
+    // Calcular imediatamente ao carregar a página
+    calcularAuditoria();
+
+    // Adicionar "ouvintes" (listeners) para recalcular sempre que se digita algo
+    inputComissaoApp.addEventListener('input', calcularAuditoria);
+    inputFaturaDeclarada.addEventListener('input', calcularAuditoria);
+    inputMotoristasAtivos.addEventListener('input', calcularAuditoria);
 }
 
-iniciarSimulador();
+// Correr o script
+iniciar();
