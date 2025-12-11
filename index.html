@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prova de Autenticação - Auditoria Fiscal TVDE (VDC)</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding: 0; }
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #d93025; border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 30px; }
+        h2 { color: #1a73e8; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .input-group, .resultado-group, .discrepancia-box { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #333; }
+        input[type="number"], input[type="text"], input[type="date"] { width: calc(100% - 10px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
+        .discrepancia-box { background-color: #ffe6e6; border-color: #d93025; font-size: 1.1em; font-weight: bold; padding: 20px; }
+        .discrepancia-box span { color: #d93025; }
+        .green-box { background-color: #e6ffed; border-color: #34a853; }
+        .button-group { text-align: center; margin-top: 30px; }
+        button { padding: 12px 25px; border: none; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; }
+        #calcularBtn { background-color: #1a73e8; color: white; margin-right: 15px; }
+        #calcularBtn:hover { background-color: #0c5ed9; }
+        #imprimirBtn { background-color: #34a853; color: white; }
+        #imprimirBtn:hover { background-color: #278d40; }
+        .legal-note { margin-top: 40px; padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px; font-size: 0.9em; color: #856404; }
+        
+        /* Otimização para Impressão/PDF */
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; margin: 0; padding: 0; }
+            .button-group, .legal-note { display: none; }
+            input[type="number"], input[type="text"], input[type="date"] { border: none; border-bottom: 1px dotted #333; padding: 5px 0; margin-bottom: 5px; }
+            .input-group, .resultado-group { border: 1px solid #ccc; page-break-inside: avoid; }
+            h1 { color: #000; border-bottom-color: #000; }
+            h2 { color: #000; border-bottom: none; }
+            .grid { grid-template-columns: 1fr; gap: 10px; }
+            .discrepancia-box { background-color: #fce4e4 !important; color: #d93025 !important; print-color-adjust: exact; border: 2px solid #d93025; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PROVA DE AUTENTICAÇÃO - Metodologia de Auditoria Fiscal TVDE (VDC)</h1>
+        <p style="text-align: center; font-style: italic;">
+            Documento de suporte para análise e quantificação de Discrepância Fiscal (Base Tributável) para período de amostra, com base na sua experiência específica.
+        </p>
+
+        <div class="input-group">
+            <h2>1. Amostra de Dados da APP</h2>
+            <div class="grid">
+                <div class="full-width">
+                    <label>Data da Amostra (Dia / Mês / Ano)</label>
+                    <input type="date" id="dataAmostra" required>
+                </div>
+                
+                <div>
+                    <label>Ganhos Brutos (Soma de todos os ganhos)</label>
+                    <input type="number" id="ganhosBrutos" value="0.00" step="0.01" required>
+                </div>
+                <div>
+                    <label>Campanhas + Gorjetas + Pagamentos na APP (Adicionais)</label>
+                    <input type="number" id="adicionais" value="0.00" step="0.01">
+                </div>
+                <div>
+                    <label>Portagem paga pelo cliente</label>
+                    <input type="number" id="portagemCliente" value="0.00" step="0.01">
+                </div>
+                <div>
+                    <label>Taxas de Cancelamento (Se houver)</label>
+                    <input type="number" id="cancelamento" value="0.00" step="0.01">
+                </div>
+                
+                <div>
+                    <label>Taxas de Reserva DEDUZIDAS pela Plataforma</label>
+                    <input type="number" id="taxasReserva" value="0.00" step="0.01" required>
+                </div>
+                <div>
+                    <label>Comissão da Plataforma DEDUZIDA (Puro %)</label>
+                    <input type="number" id="comissao" value="0.00" step="0.01" required>
+                </div>
+                <div class="full-width">
+                    <label>Ganhos Líquidos (Total Recebido)</label>
+                    <input type="number" id="ganhosLiquidosApp" value="0.00" step="0.01" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group green-box">
+            <h2>2. Fatura Emitida Pela Plataforma</h2>
+            <div class="grid">
+                <div class="full-width">
+                    <label>Comissões Relativas ao Período (De: ____ / ____ / ______ a _____ / ____ / _______)</label>
+                    <input type="text" id="periodoFatura" placeholder="Ex: 01/01/2025 a 31/01/2025" required>
+                </div>
+                <div>
+                    <label>Valor da Comissão (Base Tributável) Faturado</label>
+                    <input type="number" id="valorFatura" value="0.00" step="0.01" required>
+                </div>
+                <div>
+                    <label>Valor do IVA (Se aplicado) na Fatura (6%)</label>
+                    <input type="number" id="ivaFatura" value="0.00" step="0.01">
+                </div>
+                
+                <div class="full-width">
+                    <label>Tem Iva a 6%?</label>
+                    <label><input type="radio" name="iva6" value="Sim"> Sim</label>
+                    <label><input type="radio" name="iva6" value="Não" checked> Não</label>
+                </div>
+                <div class="full-width">
+                    <label>Tem Autoliquidação De Iva (Reverse Charge)?</label>
+                    <label><input type="radio" name="autoliquidacao" value="Sim" checked> Sim</label>
+                    <label><input type="radio" name="autoliquidacao" value="Não"> Não</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="resultado-group">
+            <h2>3. Resultado da Auditoria</h2>
+            <div id="resultadoCalculo">
+                <p>Insira os dados e clique em 'Calcular Discrepância' para iniciar a auditoria.</p>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="calcularBtn">Calcular Discrepância</button>
+            <button id="imprimirBtn">Imprimir / Gerar PDF de Prova</button>
+        </div>
+
+        <div class="legal-note">
+            **Declaração:** Os dados inseridos e a análise resultante destinam-se a fins de auditoria interna e jurídica, com base na experiência individual do motorista e nos documentos da Plataforma. Este documento não substitui o aconselhamento de um contabilista ou advogado.
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
