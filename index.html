@@ -3,180 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prova de Autenticação - Auditoria Fiscal TVDE (VDC)</title>
+    <title>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
-        
-        /* Cabeçalho */
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #b71c1c; padding-bottom: 15px; }
-        .header h1 { color: #b71c1c; margin: 0; font-size: 24px; text-transform: uppercase; }
-        .header h2 { color: #555; font-size: 16px; font-weight: normal; margin-top: 5px; font-style: italic; }
-
-        /* Estrutura de Colunas */
-        .audit-grid { display: flex; gap: 20px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 300px; padding: 15px; border-radius: 6px; border: 1px solid #ddd; }
-        
-        /* Cores das Colunas */
-        .col-blue { background-color: #e3f2fd; border-color: #90caf9; } /* Coluna 1 e 2 */
-        .col-green { background-color: #e8f5e9; border-color: #a5d6a7; } /* Coluna 3 */
-
-        .col h3 { margin-top: 0; font-size: 18px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; margin-bottom: 15px; }
-        .col-blue h3 { color: #1565c0; }
-        .col-green h3 { color: #2e7d32; }
-
-        /* Campos de Input */
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #444; }
-        .form-group input[type="text"], 
-        .form-group input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
-        .form-group input:focus { border-color: #1565c0; outline: none; }
-        
-        /* Campo Destacado (Input Crítico) */
-        .critical-input input { border: 2px solid #b71c1c; background-color: #fff8e1; font-weight: bold; }
-
-        /* Secção de Contexto (Motoristas) */
-        .context-section { margin-top: 20px; padding: 15px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; }
-        
-        /* Secção de Resultados (A Prova) */
-        .results-section { margin-top: 30px; border-top: 3px solid #b71c1c; padding-top: 20px; }
-        .results-title { color: #1565c0; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-        
-        .alert-box { background-color: #ffebee; border: 2px solid #ef5350; color: #c62828; padding: 20px; border-radius: 6px; }
-        .discrepancy-value { font-size: 28px; font-weight: bold; display: block; margin: 10px 0; }
-        
-        .extrapolation-box { margin-top: 20px; background-color: #fff3e0; border-left: 5px solid #ff9800; padding: 15px; }
-        .total-fraud { font-size: 22px; font-weight: bold; color: #e65100; }
-
-        /* Utilitários */
-        .readonly { background-color: #eee; color: #777; pointer-events: none; }
-        .sub-label { font-size: 11px; color: #666; margin-top: 2px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .columns-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .column {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .column h3 {
+            text-align: center;
+            color: #555;
+            margin-top: 0;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .input-group, .result-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .result-group {
+            padding: 10px;
+            border-top: 2px solid #eee;
+            margin-top: 15px;
+        }
+        .result-group strong {
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+        }
+        .auditoria-section {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px solid #a33;
+            background-color: #ffeaea;
+            border-radius: 5px;
+        }
+        .discrepancy {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d9534f;
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px dashed #d9534f;
+            background-color: #fdd;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1>Prova de Autenticação - Metodologia de Auditoria Fiscal TVDE (VDC)</h1>
-        <h2>Modelo de Análise Detalhada para comparação de Retenções Operacionais vs. Faturação Fiscal</h2>
-    </div>
+    <div class="container">
+        <h1>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</h1>
+        <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
+        
+        <hr>
 
-    <div class="audit-grid">
-        <div class="col col-blue">
-            <h3>1. Ganhos na Plataforma (FLEET)</h3>
-            <div class="form-group">
-                <label>Mês:</label>
-                <input type="text" value="Novembro 2025" readonly class="readonly">
+        <div class="header-info">
+            <div class="input-group">
+                <label for="mes">Mês da Amostra:</label>
+                <input type="text" id="mes" value="Novembro">
             </div>
-            <div class="form-group">
-                <label>Saldo Inicial (€):</label>
-                <input type="text" value="175.14" class="readonly">
-            </div>
-            <div class="form-group">
-                <label>Ganhos no Aplicativo (€):</label>
-                <input type="text" value="1209.82" class="readonly">
-            </div>
-            
-            <div class="form-group critical-input">
-                <label>Comissão da APP (Retida Bruta) (€):</label>
-                <input type="number" id="comissaoApp" value="279.54">
-                <div class="sub-label">*Valor extraído do Relatório Mensal (Img 25135)</div>
-            </div>
-
-            <div class="form-group">
-                <label>Taxas de Bloqueio / Gorjetas (€):</label>
-                <input type="text" value="31.10" class="readonly">
-            </div>
-            <div class="form-group">
-                <label>Saldo Final (€):</label>
-                <input type="text" value="318.98" class="readonly">
+            <div class="input-group">
+                <label for="ano">Ano da Amostra:</label>
+                <input type="number" id="ano" value="2025">
             </div>
         </div>
 
-        <div class="col col-blue">
-            <h3>2. Ganhos Líquidos (Motorista na APP)</h3>
-            <div class="form-group">
-                <label>Ganhos Brutos Totais (€):</label>
-                <input type="text" value="1248.56" class="readonly">
+        <div class="columns-container">
+            <div class="column">
+                <h3>1. Ganhos na APP (Operacional)</h3>
+                
+                <div class="input-group">
+                    <label for="ganhosBrutos">Ganhos Brutos (€):</label>
+                    <input type="number" id="ganhosBrutos" value="1500" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="pagamentosApp">Pagamentos APP (€):</label>
+                    <input type="number" id="pagamentosApp" value="1300" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="campanhas">Campanhas (€):</label>
+                    <input type="number" id="campanhas" value="50" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="taxasCancelamento">Taxas de Cancelamento (€):</label>
+                    <input type="number" id="taxasCancelamento" value="15" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="gorjetasOperacionais">Gorjetas (€):</label>
+                    <input type="number" id="gorjetasOperacionais" value="20" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="portagensOperacionais">Portagens (€):</label>
+                    <input type="number" id="portagensOperacionais" value="10" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                <div class="input-group">
+                    <label for="taxasReservaOperacionais">Taxas de Reserva (€):</label>
+                    <input type="number" id="taxasReservaOperacionais" value="20" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                
+                <h4>Deduções operacionais</h4>
+                <div class="input-group">
+                    <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
+                    <input type="number" id="comissaoPlataformaOperacionais" value="300" oninput="calcularBaseTributavelOperacional()">
+                </div>
+                
+                <div class="result-group">
+                    <label>Base Tributável Operacional Retida (BTOR):</label>
+                    <strong id="btOperacionalResultado">0.00 €</strong>
+                    <input type="hidden" id="baseTributavelOperacional" value="0">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Pagamentos na APP (Adicionais) (€):</label>
-                <input type="text" value="1202.97" class="readonly">
-            </div>
-            
-            <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-            <label style="color: #b71c1c; font-weight: bold; font-size: 12px;">**DEDUÇÕES OPERACIONAIS**</label>
-            
-            <div class="form-group">
-                <label>Comissão da Plataforma DEDUZIDA (€):</label>
-                <input type="text" id="comissaoDeduzidaDisplay" value="279.54" class="readonly" style="font-weight: bold;">
-            </div>
-            <div class="form-group">
-                <label>Ganhos Líquidos (Total Recebido) (€):</label>
-                <input type="text" value="968.02" class="readonly">
-            </div>
-        </div>
 
-        <div class="col col-green">
-            <h3>3. Fatura Emitida (Comissão)</h3>
-            <div class="form-group">
-                <label>Comissões Relativas ao Período:</label>
-                <input type="text" value="01/11/2025 a 30/11/2025" readonly class="readonly">
+            <div class="column">
+                <h3>2. Ganhos da Empresa (Fleet)</h3>
+                
+                <div class="input-group">
+                    <label for="saldoInicial">Saldo Inicial (€):</label>
+                    <input type="number" id="saldoInicial" value="100">
+                </div>
+                <div class="input-group">
+                    <label for="ganhosAppFleet">Ganhos na App (€):</label>
+                    <input type="number" id="ganhosAppFleet" value="1400">
+                </div>
+                <div class="input-group">
+                    <label for="comissaoPlataformaFleet">Comissão da Plataforma (Retida) (€):</label>
+                    <input type="number" id="comissaoPlataformaFleet" value="300">
+                </div>
+                 <div class="input-group">
+                    <label for="taxasBloqueio">Taxas de Bloqueio (€):</label>
+                    <input type="number" id="taxasBloqueio" value="5">
+                </div>
+                <div class="input-group">
+                    <label for="gorjetasPassageiros">Gorjetas dos Passageiros (€):</label>
+                    <input type="number" id="gorjetasPassageiros" value="20">
+                </div>
+                <div class="input-group">
+                    <label for="ganhosCampanhasFleet">Ganhos de Campanhas (€):</label>
+                    <input type="number" id="ganhosCampanhasFleet" value="50">
+                </div>
+                <div class="input-group">
+                    <label for="saldoFinal">Saldo Final (€):</label>
+                    <input type="number" id="saldoFinal" value="120">
+                </div>
+
+                <h4>Resumo</h4>
+                 <div class="result-group">
+                    <label>Pagamento a Dinheiro aos Motoristas (€):</label>
+                    <strong><input type="number" id="pagamentoDinheiroMotoristas" value="1000"></strong>
+                </div>
             </div>
 
-            <div class="form-group critical-input">
-                <label>Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
-                <input type="number" id="faturaDeclarada" value="110.90">
-                <div class="sub-label">*Valor da Fatura Oficial (Img 25130)</div>
-            </div>
+            <div class="column">
+                <h3>3. Fatura Emitida (Fiscal)</h3>
+                
+                <div class="input-group">
+                    <label for="comissoesRelativasPeriodo">Comissões Relativas ao Período (€):</label>
+                    <input type="number" id="comissoesRelativasPeriodo" value="300" oninput="calcularDiscrepancia()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
+                    <input type="number" id="baseTributavelFaturada" value="280" oninput="calcularDiscrepancia()">
+                </div>
 
-            <div class="form-group">
-                <label>Tem Autoliquidação de IVA?</label>
-                <div>
-                    <input type="radio" checked> Sim (Reverse Charge)
+                <div class="input-group">
+                    <label for="iva6">Tem IVA a 6%?</label>
+                    <select id="iva6">
+                        <option value="Não">Não</option>
+                        <option value="Sim">Sim</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="reverseCharge">Tem Autoliquidação de IVA (Reverse Charge)?</label>
+                    <select id="reverseCharge">
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+                
+                <div class="result-group">
+                    <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
+                    <strong id="btFaturadaResultado">280.00 €</strong>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="context-section">
-        <h3>4. Últimos Dados Oficiais (Contexto de Mercado)</h3>
-        <div style="display: flex; gap: 20px;">
-            <div class="form-group" style="flex: 1;">
-                <label>Viaturas Inscritas Ativas (Aprox.):</label>
-                <input type="text" value="39000" class="readonly">
-            </div>
-            <div class="form-group critical-input" style="flex: 1;">
-                <label>Motoristas Inscritos Ativos (Para Extrapolação):</label>
-                <input type="number" id="motoristasAtivos" value="36000">
-            </div>
-        </div>
-    </div>
-
-    <div class="results-section">
-        <div class="results-title">5. Resultado da Auditoria e Discrepância Fiscal</div>
         
-        <p>Amostra de Análise: <strong>Novembro 2025</strong></p>
-        <p><strong>BASE TRIBUTÁVEL OPERACIONAL (APP):</strong> <span id="resOperacional">€279.54</span></p>
-        <p><strong>Base Tributável FATURADA:</strong> <span id="resFaturada">€110.90</span></p>
+        <hr style="margin-top: 40px; margin-bottom: 40px;">
 
-        <div class="alert-box">
-            <div>DISCREPÂNCIA (Omissão) da BASE TRIBUTÁVEL:</div>
-            <span class="discrepancy-value" id="resDiscrepancia">€168.64</span>
-            <div><span id="resPercentagem">60.33</span>% do Total Operacional</div>
-            <div style="margin-top: 10px; font-size: 14px;">Valor Potencial de IVA (6%) Omitido sobre esta Discrepância: <span id="resIvaOmitido" style="font-weight: bold;">€10.12</span></div>
-        </div>
+        <div class="auditoria-section">
+            <h2>5. Resultado da Auditoria e Discrepância Fiscal</h2>
 
-        <div class="extrapolation-box">
-            <h3>POTENCIAL DE FRAUDE (EXTRAPOLAÇÃO):</h3>
-            <p>Se a omissão acima for a média mensal por Motorista, o potencial de litígio ascende a:</p>
-            <p>OMISSÃO ANUAL ESTIMADA: <span id="extrapolacaoAnual" style="font-weight: bold;">€72,852,480.00</span></p>
-            <div class="total-fraud">POTENCIAL TOTAL DE LITÍGIO (7 Anos de Operação): <span id="extrapolacaoTotal">€509,967,360.00</span></div>
+            <div class="input-group">
+                <label for="viaturasAtivas">Viaturas Ativas (Aprox.):</label>
+                <input type="number" id="viaturasAtivas" value="10000" oninput="calcularDiscrepancia()">
+            </div>
+            <div class="input-group">
+                <label for="motoristasAtivos">Motoristas Ativos (Aprox.):</label>
+                <input type="number" id="motoristasAtivos" value="20000" oninput="calcularDiscrepancia()">
+            </div>
+            
+            <br>
+            
+            <h3>BASE TRIBUTÁVEL</h3>
+            <div class="result-group">
+                <label>Total Base Tributável Operacional Retida (BTOR):</label>
+                <strong id="btorFinal">0.00 €</strong>
+            </div>
+            <div class="result-group">
+                <label>Base Tributável Faturada (BTF):</label>
+                <strong id="btfFinal">280.00 €</strong>
+            </div>
+
+            <br>
+
+            <h3>DISCREPANCIA (Omissão) da BASE TRIBUTÁVEL:</h3>
+            <div class="discrepancy">
+                <span id="discrepanciaResultado">0.00 €</span>
+            </div>
+            
+            <div class="result-group">
+                <label>Valor potencial do IVA (6%) omitido nesta Discrepância:</label>
+                <strong id="ivaPotencialResultado">0.00 €</strong>
+            </div>
+            
+            <p>Se esta omissão (<span id="omissaoPorViatura">0.00 €</span>) fosse a média mensal por Viaturas Ativas (<span id="viaturasAtivasContexto">10.000</span>), o potencial valor omitido em todo o mercado seria de <strong id="valorOmitidoMercado">0.00 €</strong>.</p>
         </div>
     </div>
 
-</div>
+    <script src="script.js"></script>
 
-<script src="script.js"></script>
 </body>
 </html>
