@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prova de Autenticação Auditoria Fiscal para TVDE (VDC)</title>
+    <title>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,41 +15,55 @@
             max-width: 1200px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 20px;
+            padding: 25px; /* Margem interna ligeiramente aumentada */
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
         h1, h2 {
             text-align: center;
             color: #333;
         }
+        h2 {
+            font-size: 1.1em;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
         .header-info {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             margin-bottom: 20px;
             font-weight: bold;
         }
         .columns-container {
             display: flex;
             justify-content: space-between;
-            gap: 20px;
+            gap: 30px; /* Aumento do espaço entre colunas */
             margin-top: 30px;
         }
         .column {
-            flex: 0 0 48%; /* Duas colunas com espaço */
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fafafa;
+            flex: 0 0 48%;
+            padding: 20px; /* Margem interna da coluna */
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #ffffff;
         }
         .column h3 {
             text-align: center;
-            color: #555;
+            color: #444;
             margin-top: 0;
             border-bottom: 2px solid #ddd;
             padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
         }
         .input-group, .result-group {
-            margin-bottom: 10px;
+            margin-bottom: 15px; /* Aumento da margem entre grupos */
         }
         .input-group label {
             display: block;
@@ -58,42 +72,47 @@
         }
         .input-group input, .input-group select {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 3px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         .result-group {
-            padding: 10px;
-            border-top: 2px solid #eee;
+            padding: 15px;
+            border-top: 1px solid #ccc;
             margin-top: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
         }
         .result-group strong {
             font-weight: bold;
             display: block;
             margin-top: 5px;
+            font-size: 1.1em;
         }
         .auditoria-section {
             margin-top: 40px;
-            padding: 20px;
+            padding: 25px;
             border: 2px solid #a33;
             background-color: #ffeaea;
-            border-radius: 5px;
+            border-radius: 8px;
         }
         .discrepancy {
-            font-size: 1.2em;
+            font-size: 1.4em;
             font-weight: bold;
             color: #d9534f;
-            margin-top: 15px;
-            padding: 10px;
+            margin: 15px 0;
+            padding: 15px;
             border: 1px dashed #d9534f;
             background-color: #fdd;
+            text-align: center;
+            border-radius: 4px;
         }
         .button-container {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 30px;
         }
         .action-button {
             flex: 1;
@@ -104,6 +123,7 @@
             border-radius: 5px;
             font-size: 1.1em;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         .action-button.calculate {
             background-color: #28a745;
@@ -113,10 +133,14 @@
         }
         @media print {
             .button-container {
-                display: none; /* Não mostrar botões no PDF/Impressão */
+                display: none;
             }
             .container {
                 box-shadow: none;
+                padding: 0;
+            }
+            body {
+                margin: 0;
             }
         }
     </style>
@@ -124,7 +148,8 @@
 <body>
 
     <div class="container" id="printableArea">
-        <h1>Prova Inatacável de Fraude Fiscal Estrutural</h1>
+        <h1>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</h1>
+        <h2>Prova Inatacável de Fraude Fiscal Estrutural</h2>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
         
         <hr>
@@ -183,6 +208,11 @@
                     <input type="number" id="comissaoPlataformaOperacionais" value="300" oninput="calcularBaseTributavelOperacional()">
                 </div>
                 
+                <div class="result-group" style="background-color: #e6f7ff;">
+                    <label>Ganhos Líquidos (Estimativa) (€):</label>
+                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
+                </div>
+
                 <div class="result-group">
                     <label>Base Tributável Operacional Retida (BTOR):</label>
                     <strong id="btOperacionalResultado">0.00 €</strong>
@@ -214,7 +244,7 @@
                     </select>
                 </div>
                 
-                <div class="result-group">
+                <div class="result-group" style="background-color: #fffbe6;">
                     <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
                     <strong id="btFaturadaResultado">280.00 €</strong>
                 </div>
