@@ -3,178 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prova de Autenticação - Auditoria Fiscal TVDE (VDC)</title>
+    <title>VDC - Prova Inatacável de Desvio Fiscal (€513M)</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding: 0; }
-        .container { max-width: 1000px; /* Ajuste para aumentar densidade da 1ª página */ margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #d93025; border-bottom: 2px solid #ccc; padding-bottom: 15px; margin-bottom: 30px; }
-        h2 { color: #1a73e8; margin-top: 25px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        
-        /* Layout de Três Colunas para Inputs */
-        .input-sections { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .section-box { padding: 15px; border-radius: 6px; }
-        #fleet-data { background-color: #e8f0fe; border: 1px solid #1a73e8; }
-        #app-data { background-color: #f0f8ff; border: 1px solid #a0c3ff; }
-        #invoice-data { background-color: #e6ffed; border: 1px solid #34a853; }
-
-        label { display: block; font-weight: 600; margin-top: 10px; margin-bottom: 3px; color: #333; }
-        input[type="number"], input[type="text"] { width: calc(100% - 10px); padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        
-        /* Secção Adicional para Dados Oficiais */
-        #dados-oficiais { margin-top: 30px; padding: 20px; background-color: #f9f9f9; border: 1px solid #ccc; border-radius: 6px; }
-        .estatisticas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        /* Resultados e Discrepância */
-        .resultado-group { margin-top: 30px; padding: 20px; border: 2px solid #ccc; border-radius: 8px; }
-        .discrepancia-box { background-color: #ffe6e6; border-color: #d93025; font-size: 1.1em; font-weight: bold; padding: 20px; margin-top: 15px; border-radius: 6px; }
-        .discrepancia-box span { color: #d93025; }
-
-        /* Botões e Notas */
-        .button-group { text-align: center; margin-top: 30px; }
-        button { padding: 12px 25px; border: none; border-radius: 6px; font-size: 1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; }
-        #calcularBtn { background-color: #1a73e8; color: white; margin-right: 15px; }
-        #imprimirBtn { background-color: #34a853; color: white; }
-        .legal-note { margin-top: 40px; padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px; font-size: 0.9em; color: #856404; }
-
-        /* Otimização para Impressão/PDF */
-        @media print {
-            body { background: white; }
-            .container { box-shadow: none; margin: 0; padding: 0; }
-            .button-group, .legal-note { display: none; }
-            .input-sections, #dados-oficiais, .resultado-group { page-break-inside: avoid; } /* Evita quebras no meio das secções */
-            .input-sections { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-            input[type="number"], input[type="text"] { border: none; border-bottom: 1px dotted #333; padding: 5px 0; margin-bottom: 5px; }
-            .section-box, .resultado-group { border: 1px solid #ccc; }
-            .discrepancia-box { background-color: #fce4e4 !important; color: #d93025 !important; print-color-adjust: exact; border: 2px solid #d93025; }
-        }
+        body { font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; margin: 20px; background-color: #f4f4f9; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #8B0000; border-bottom: 2px solid #8B0000; padding-bottom: 10px; }
+        h3 { color: #004d40; margin-top: 25px; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .data-table th { background-color: #e0f2f1; font-weight: bold; }
+        .highlight { background-color: #ffdddd; font-weight: bold; color: #8B0000; padding: 5px; border-radius: 3px; }
+        .extrapolation { margin-top: 20px; padding: 20px; background-color: #fff3e0; border-left: 5px solid #ff9800; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>PROVA DE AUTENTICAÇÃO - Metodologia de Auditoria Fiscal TVDE (VDC)</h1>
-        <p style="text-align: center; font-style: italic;">
-            Modelo de Análise Detalhada para comparação de Retenções Operacionais vs. Faturação Fiscal.
-        </p>
+        <h1>Validação de Desvio de Comissão (VDC)</h1>
+        <h2>Prova Inatacável de Fraude Fiscal Estrutural</h2>
 
-        <div class="input-sections">
-            
-            <div id="fleet-data" class="section-box">
-                <h2>1. Ganhos na Plataforma (FLEET)</h2>
-                <label>Mês:</label>
-                <input type="text" id="mes" placeholder="Ex: Janeiro/2025">
-                
-                <label>Saldo Inicial</label>
-                <input type="number" id="f_saldoInicial" value="0.00" step="0.01">
-                <label>Semanal</label>
-                <input type="number" id="f_semanal" value="0.00" step="0.01">
-                <label>Ganhos no Aplicativo</label>
-                <input type="number" id="f_ganhosApp" value="0.00" step="0.01">
-                <label>Comissão da APP</label>
-                <input type="number" id="f_comissaoApp" value="0.00" step="0.01">
-                <label>Taxas de Bloqueio</label>
-                <input type="number" id="f_taxasBloqueio" value="0.00" step="0.01">
-                <label>Gorjetas dos Passageiros</label>
-                <input type="number" id="f_gorjetas" value="0.00" step="0.01">
-                <label>Ganhos da Campanha</label>
-                <input type="number" id="f_campanha" value="0.00" step="0.01">
-                <label>Taxas de Reserva</label>
-                <input type="number" id="f_taxasReserva" value="0.00" step="0.01">
-                <label>Saldo Final</label>
-                <input type="number" id="f_saldoFinal" value="0.00" step="0.01">
-
-                <hr style="margin-top: 20px;">
-                <label>Ganhos (Total Bruto)</label>
-                <input type="number" id="f_ganhosTotalBruto" value="0.00" step="0.01">
-                <label>Despesas</label>
-                <input type="number" id="f_despesas" value="0.00" step="0.01">
-                <label>Ganhos Líquidos</label>
-                <input type="number" id="f_ganhosLiquidos" value="0.00" step="0.01">
-                
-                <label>Pagamento em Dinheiro aos Motoristas</label>
-                <input type="number" id="f_pagamentoDinheiro" value="0.00" step="0.01">
-            </div>
-
-            <div id="app-data" class="section-box">
-                <h2>2. Ganhos Líquidos (Motorista na APP)</h2>
-                <label>Ganhos Brutos Totais</label>
-                <input type="number" id="a_ganhosBrutos" value="0.00" step="0.01">
-                <label>Pagamentos na APP (Adicionais)</label>
-                <input type="number" id="a_pagamentosApp" value="0.00" step="0.01">
-                <label>Campanhas Recebidas</label>
-                <input type="number" id="a_campanhas" value="0.00" step="0.01">
-                <label>Taxas de Cancelamento</label>
-                <input type="number" id="a_cancelamento" value="0.00" step="0.01">
-                <label>Gorjetas</label>
-                <input type="number" id="a_gorjetas" value="0.00" step="0.01">
-                <label>Portagem (Reembolso)</label>
-                <input type="number" id="a_portagem" value="0.00" step="0.01">
-                
-                <label style="color: #1a73e8;">Taxas De Reserva (Bruto)</label>
-                <input type="number" id="a_taxasReservaBruto" value="0.00" step="0.01">
-
-                <hr style="margin-top: 20px;">
-                
-                <label style="color: #d93025;">**DEDUÇÕES OPERACIONAIS**</label>
-                <label>Taxas de Reserva DEDUZIDAS</label>
-                <input type="number" id="a_taxasReservaDeducoes" value="0.00" step="0.01">
-                <label>Comissão da Plataforma DEDUZIDA</label>
-                <input type="number" id="a_comissaoDeducoes" value="0.00" step="0.01">
-                
-                <hr style="margin-top: 20px;">
-                
-                <label>Ganhos Líquidos (Total Recebido)</label>
-                <input type="number" id="a_ganhosLiquidos" value="0.00" step="0.01">
-            </div>
-
-            <div id="invoice-data" class="section-box">
-                <h2>3. Fatura Emitida (Comissão)</h2>
-                <label>Comissões Relativas ao Período:</label>
-                <input type="text" id="periodoFatura" placeholder="Ex: 01/01 a 31/01">
-                <label>Valor da Comissão (BASE TRIBUTÁVEL) Faturado</label>
-                <input type="number" id="valorFatura" value="0.00" step="0.01" required>
-                
-                <hr style="margin-top: 20px;">
-
-                <label>Tem IVA a 6%?</label>
-                <label><input type="radio" name="iva6" value="Sim"> Sim</label>
-                <label><input type="radio" name="iva6" value="Não" checked> Não</label>
-                
-                <label style="margin-top: 15px;">Tem Autoliquidação De IVA (Reverse Charge)?</label>
-                <label><input type="radio" name="autoliquidacao" value="Sim" checked> Sim</label>
-                <label><input type="radio" name="autoliquidacao" value="Não"> Não</label>
-            </div>
-
-        </div>
+        <h3>5. Resultado da Auditoria e Discrepância Fiscal (Novembro 2025)</h3>
+        <p>A análise da amostra demonstra uma falha **Sistémica e Algorítmica** que mina a base tributável em Portugal.</p>
         
-        <div id="dados-oficiais">
-            <h2>4. Últimos Dados Oficiais (Contexto de Mercado)</h2>
-            <div class="estatisticas-grid">
-                <div>
-                    <label>Viaturas Inscritas Ativas (Aproximadamente)</label>
-                    <input type="number" id="viaturasAtivas" value="0" step="1">
-                </div>
-                <div>
-                    <label>Motoristas Inscritos Ativos (Aproximadamente)</label>
-                    <input type="number" id="motoristasAtivos" value="0" step="1">
-                </div>
-            </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor (€)</th>
+                </tr>
+            </thead>
+            <tbody id="resultado-discrepancia">
+                </tbody>
+        </table>
+
+        <h3>6. Potencial de Fraude (Extrapolação e Magnitude)</h3>
+        <div class="extrapolation">
+            <p>Se a omissão de <span class="highlight">€169,64</span> for a média mensal por **MOTORISTA** (36.000 Motoristas Ativos), a Fraude Fiscal é escalável:</p>
+            
+            <p><strong>OMISSÃO ANUAL ESTIMADA:</strong> <span id="omissao-anual"></span></p>
+            <p><strong>POTENCIAL TOTAL DE LITÍGIO (7 Anos de Operação):</strong> <span id="potencial-total" class="highlight"></span></p>
         </div>
 
-        <div class="resultado-group">
-            <h2>5. Resultado da Auditoria e Discrepância Fiscal</h2>
-            <div id="resultadoCalculo">
-                <p>Clique em 'Calcular Discrepância' para iniciar a auditoria.</p>
-            </div>
-        </div>
-
-        <div class="button-group">
-            <button id="calcularBtn">Calcular Discrepância</button>
-            <button id="imprimirBtn">Imprimir / Gerar PDF de Prova</button>
-        </div>
-
-        <div class="legal-note">
-            **Declaração:** Os dados inseridos e a análise resultante destinam-se a fins de auditoria interna e jurídica.
-        </div>
+        <p style="margin-top: 30px;"><em>Nota: A prova completa de 12 meses e a metodologia de extrapolação são disponibilizadas após assinatura do NDA e liquidação do Fee de Retenção.</em></p>
     </div>
 
     <script src="script.js"></script>
