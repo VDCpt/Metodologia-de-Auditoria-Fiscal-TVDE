@@ -7,75 +7,58 @@ document.addEventListener('DOMContentLoaded', () => {
     imprimirBtn.addEventListener('click', () => { window.print(); });
 
     function calcularDiscrepancia() {
-        // 1. Obter todos os valores de input como números
-        const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
-        const adicionais = parseFloat(document.getElementById('adicionais').value) || 0;
-        const portagemCliente = parseFloat(document.getElementById('portagemCliente').value) || 0;
-        const cancelamento = parseFloat(document.getElementById('cancelamento').value) || 0;
+        // --- 1. CAPTURA DE DADOS RELEVANTES PARA A DISCREPÂNCIA ---
         
-        const taxasReserva = parseFloat(document.getElementById('taxasReserva').value) || 0;
-        const comissao = parseFloat(document.getElementById('comissao').value) || 0;
-        const ganhosLiquidosApp = parseFloat(document.getElementById('ganhosLiquidosApp').value) || 0;
+        // Dados de Retenção Operacional (Coluna 2 - APP)
+        const a_taxasReservaDeducoes = parseFloat(document.getElementById('a_taxasReservaDeducoes').value) || 0;
+        const a_comissaoDeducoes = parseFloat(document.getElementById('a_comissaoDeducoes').value) || 0;
         
+        // Dados de Faturação Fiscal (Coluna 3 - Fatura)
         const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 0;
-        const ivaFatura = parseFloat(document.getElementById('ivaFatura').value) || 0;
-        const autoliquidacao = document.querySelector('input[name="autoliquidacao"]:checked').value;
-
-        // 2. CÁLCULO DA COMISSÃO OPERACIONAL TOTAL RETIDA (APP)
-        // Este é o valor total que a Plataforma reteve para cobrir a sua intermediação.
-        const comissaoOperacionalTotalRetida = taxasReserva + comissao;
-
-        // 3. CÁLCULO DA DISCREPÂNCIA OPERACIONAL
-        const discrepanciaOperacional = comissaoOperacionalTotalRetida - valorFatura;
+        const iva6Checked = document.querySelector('input[name="iva6"]:checked').value === 'Sim';
         
-        // 4. CÁLCULO DA COMISSÃO CORRETA (Base tributável)
-        // Se a comissão for uma fatura pura de serviço (sem IVA)
-        // O valor correto da comissão fatura deveria ser:
-        const comissaoCorretaBaseTributavel = comissaoOperacionalTotalRetida;
-        
-        // O IVA que deveria ser aplicado em Portugal (6%) sobre a comissão correta
-        const ivaCorretoEsperado = comissaoCorretaBaseTributavel * 0.06;
+        // --- 2. CÁLCULO DA BASE TRIBUTÁVEL OPERACIONAL CORRETA (APP) ---
+        // Este é o valor total que a Plataforma reteve como custo de intermediação/serviço, 
+        // e que, logicamente, deveria ser a Base Tributável correta para IVA.
+        const baseTributavelOperacionalCorreta = a_taxasReservaDeducoes + a_comissaoDeducoes;
 
-        // 5. CÁLCULO DA OMISSÃO DE BASE TRIBUTÁVEL E IVA
-        // Omissão de Base Tributável: Quanto a fatura está a 'omitir' em relação ao que foi retido.
-        const omissaoBaseTributavel = comissaoCorretaBaseTributavel - valorFatura;
-        
-        // Omissão de IVA (6%) sobre o valor omitido
+        // --- 3. CÁLCULO DA DISCREPÂNCIA FISCAL ---
+        // Quanto a Base Faturada está a omitir em relação ao que foi retido na operação.
+        const omissaoBaseTributavel = baseTributavelOperacionalCorreta - valorFatura;
+
+        // --- 4. CÁLCULO DO IVA OMISSÃO (6%) ---
+        // O IVA que foi potencialmente omitido ao Estado português devido à omissão da Base Tributável.
+        const ivaCorretoEsperado = baseTributavelOperacionalCorreta * 0.06;
         const ivaOmitido = omissaoBaseTributavel * 0.06;
-
-        // 6. VALIDAÇÃO DE COERÊNCIA DA APP
-        const totalCalculadoApp = ganhosBrutos + adicionais + portagemCliente + cancelamento - comissaoOperacionalTotalRetida;
-        const diferencaLiquida = ganhosLiquidosApp - totalCalculadoApp;
-        const coerenciaApp = Math.abs(diferencaLiquida) < 0.05; // Margem de erro de 5 cêntimos
-
-        // 7. APRESENTAR RESULTADOS
+        
+        // --- 5. APRESENTAÇÃO DE RESULTADOS ---
+        const mes = document.getElementById('mes').value || 'Período Não Especificado';
+        
         let html = `
+            <p><strong>Amostra de Análise:</strong> ${mes}</p>
             <div class="grid">
                 <div>
-                    <p><strong>Ganhos Brutos Totais (APP):</strong> ${ganhosBrutos.toFixed(2)} €</p>
-                    <p><strong>Ganhos Líquidos Recebidos (APP):</strong> ${ganhosLiquidosApp.toFixed(2)} €</p>
+                    <h3>BASE TRIBUTÁVEL OPERACIONAL</h3>
+                    <p>Total de Taxas de Reserva Deduzidas: <strong>${a_taxasReservaDeducoes.toFixed(2)} €</strong></p>
+                    <p>Total de Comissão Deduzida: <strong>${a_comissaoDeducoes.toFixed(2)} €</strong></p>
+                    <p style="font-size: 1.1em;">Total Base Tributável Operacional Retida (APP): <strong>${baseTributavelOperacionalCorreta.toFixed(2)} €</strong></p>
                 </div>
                 <div>
-                    <p><strong>Comissão Operacional TOTAL Retida (Taxas + Comissão):</strong> ${comissaoOperacionalTotalRetida.toFixed(2)} €</p>
-                    <p><strong>Valor Base Faturado Pela Plataforma:</strong> ${valorFatura.toFixed(2)} €</p>
+                    <h3>BASE TRIBUTÁVEL FATURADA</h3>
+                    <p>Valor Faturado (Base Tributável na Fatura): <strong>${valorFatura.toFixed(2)} €</strong></p>
+                    <p>Fatura Inclui IVA 6%: <strong>${iva6Checked ? 'SIM' : 'NÃO'}</strong></p>
                 </div>
             </div>
             <hr>
             
             <div class="discrepancia-box">
-                <p>DISCREPÂNCIA OPERACIONAL (Valor Retido - Valor Faturado): <span>${discrepanciaOperacional.toFixed(2)} €</span></p>
-                <p>Valor de Base Tributável OMITIDO: <span>${omissaoBaseTributavel.toFixed(2)} €</span></p>
-            </div>
-
-            <div class="legal-note" style="margin-top: 20px;">
-                <p><strong>Impacto Fiscal (Simulação IVA 6%):</strong></p>
-                <p>Valor de IVA (6%) Omitido sobre a Discrepância: <span>${ivaOmitido.toFixed(2)} €</span></p>
-                <p>Se a Base Tributável fosse correta (${comissaoCorretaBaseTributavel.toFixed(2)} €), o IVA correto seria: <span>${ivaCorretoEsperado.toFixed(2)} €</span></p>
+                <p>DISCREPÂNCIA (Omisão) da BASE TRIBUTÁVEL: <span>${omissaoBaseTributavel.toFixed(2)} €</span></p>
+                <p>Valor Potencial de IVA (6%) Omitido sobre esta Discrepância: <span>${ivaOmitido.toFixed(2)} €</span></p>
             </div>
             
             <div class="legal-note" style="margin-top: 20px;">
-                <p><strong>Coerência da APP:</strong> ${coerenciaApp ? '✅ Coerente' : `⚠️ Discrepância de ${diferencaLiquida.toFixed(2)} € (Verificar campos!)`}</p>
-                <p><strong>Autoliquidação na Fatura:</strong> ${autoliquidacao}</p>
+                <p><strong>Conclusão Fiscal para o Tribunal:</strong> A Plataforma reteve operacionalmente ${baseTributavelOperacionalCorreta.toFixed(2)} €, mas só faturou ${valorFatura.toFixed(2)} €, resultando numa omissão de Base Tributável de ${omissaoBaseTributavel.toFixed(2)} €.</p>
+                <p>O IVA (6%) sobre a Base Tributável correta seria de ${ivaCorretoEsperado.toFixed(2)} €.</p>
             </div>
         `;
 
