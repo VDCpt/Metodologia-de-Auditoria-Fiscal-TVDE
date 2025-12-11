@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- 1. CAPTURA DE DADOS RELEVANTES ---
         
         // Dados de Retenção Operacional (Coluna 2 - APP)
+        // CAPTURA DO NOVO CAMPO:
+        const a_taxasReservaBruto = parseFloat(document.getElementById('a_taxasReservaBruto').value) || 0;
+        
         const a_taxasReservaDeducoes = parseFloat(document.getElementById('a_taxasReservaDeducoes').value) || 0;
         const a_comissaoDeducoes = parseFloat(document.getElementById('a_comissaoDeducoes').value) || 0;
         
@@ -18,8 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const iva6Checked = document.querySelector('input[name="iva6"]:checked').value === 'Sim';
         
         // Dados da Fleet (Coluna 1) - Capturados para Documentação
-        // Removidos: f_transacoes, f_ganhosLiquidosMes
-        // Adicionados: f_ganhosTotalBruto, f_despesas, f_ganhosLiquidos
         const mes = document.getElementById('mes').value || 'Período Não Especificado';
         const f_ganhosTotalBruto = parseFloat(document.getElementById('f_ganhosTotalBruto').value) || 0;
         const f_despesas = parseFloat(document.getElementById('f_despesas').value) || 0;
@@ -27,11 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // --- 2. CÁLCULO DA BASE TRIBUTÁVEL OPERACIONAL CORRETA (APP) ---
-        // Este é o valor total que a Plataforma reteve como custo de intermediação/serviço.
+        // A Base Tributável correta é a soma das deduções (serviço de intermediação)
         const baseTributavelOperacionalCorreta = a_taxasReservaDeducoes + a_comissaoDeducoes;
 
         // --- 3. CÁLCULO DA DISCREPÂNCIA FISCAL ---
-        // Omissão Base Tributável: O que a fatura omite em relação ao que foi retido na operação.
         const omissaoBaseTributavel = baseTributavelOperacionalCorreta - valorFatura;
 
         // --- 4. CÁLCULO DO IVA OMISSÃO (6%) ---
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="legal-note" style="margin-top: 20px;">
+                <p><strong>Destaque (Dados Brutos):</strong> A Plataforma registou ${a_taxasReservaBruto.toFixed(2)} € em Taxas de Reserva, mas apenas ${a_taxasReservaDeducoes.toFixed(2)} € foram deduzidos para compor a Base Tributável Operacional. (Para efeitos de auditoria, a discrepância é calculada sobre as deduções.)</p>
                 <p><strong>Coerência da Fleet (Para Documentação):</strong> Ganhos Brutos (${f_ganhosTotalBruto.toFixed(2)} €) - Despesas (${f_despesas.toFixed(2)} €) = Ganhos Líquidos Apresentados (${f_ganhosLiquidos.toFixed(2)} €)</p>
                 <p><strong>Conclusão Fiscal para o Tribunal:</strong> A Plataforma reteve operacionalmente ${baseTributavelOperacionalCorreta.toFixed(2)} €, mas só faturou ${valorFatura.toFixed(2)} €, resultando numa omissão de Base Tributável de ${omissaoBaseTributavel.toFixed(2)} €.</p>
             </div>
