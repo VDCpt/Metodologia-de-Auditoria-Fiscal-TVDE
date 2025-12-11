@@ -1,84 +1,76 @@
-// script.js - Motor de Cálculo para VDC
+// Constante para o IVA (6%)
+const IVA_TAXA = 0.06;
 
-// Constante: Anos de operação para o cálculo total
-const ANOS_OPERACAO = 7;
-const TAXA_IVA = 0.06; // 6% IVA Potencial
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializa os cálculos ao carregar a página
+    calcularBaseTributavelOperacional();
+    calcularDiscrepancia();
+});
 
-// Seleção dos Elementos de Input (Entrada)
-const inputComissaoApp = document.getElementById('comissaoApp');
-const inputFaturaDeclarada = document.getElementById('faturaDeclarada');
-const inputMotoristasAtivos = document.getElementById('motoristasAtivos');
-
-// Seleção dos Elementos de Output (Resultados)
-const displayComissaoDeduzida = document.getElementById('comissaoDeduzidaDisplay');
-const resOperacional = document.getElementById('resOperacional');
-const resFaturada = document.getElementById('resFaturada');
-const resDiscrepancia = document.getElementById('resDiscrepancia');
-const resPercentagem = document.getElementById('resPercentagem');
-const resIvaOmitido = document.getElementById('resIvaOmitido');
-const extrapolacaoAnual = document.getElementById('extrapolacaoAnual');
-const extrapolacaoTotal = document.getElementById('extrapolacaoTotal');
-
-// Função de Formatação de Moeda (EUR)
-const formatarEuro = (valor) => {
-    return valor.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
-};
-
-// Função Principal de Cálculo
-function calcularAuditoria() {
-    // 1. Obter valores dos inputs (converte string para float)
-    const valComissaoApp = parseFloat(inputComissaoApp.value) || 0;
-    const valFaturaDeclarada = parseFloat(inputFaturaDeclarada.value) || 0;
-    const valMotoristas = parseInt(inputMotoristasAtivos.value) || 0;
-
-    // 2. Atualizar campos de leitura espelhados
-    displayComissaoDeduzida.value = valComissaoApp.toFixed(2);
-    resOperacional.innerText = formatarEuro(valComissaoApp);
-    resFaturada.innerText = formatarEuro(valFaturaDeclarada);
-
-    // 3. Cálculo da Discrepância (Omissão)
-    const discrepancia = valComissaoApp - valFaturaDeclarada;
+// 1. Cálculo da Base Tributável Operacional Retida (BTOR)
+function calcularBaseTributavelOperacional() {
+    // Obter todos os valores de input necessários
+    const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
+    const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
     
-    // 4. Cálculo da Percentagem
-    let percentagem = 0;
-    if (valComissaoApp > 0) {
-        percentagem = (discrepancia / valComissaoApp) * 100;
-    }
-
-    // 5. Cálculo do IVA Omitido
-    const ivaOmitido = discrepancia * TAXA_IVA;
-
-    // 6. Extrapolações (A Magnitude da Fraude)
-    const totalAnual = discrepancia * 12 * valMotoristas;
-    const totalLitigio = totalAnual * ANOS_OPERACAO;
-
-    // 7. Atualizar o DOM (Resultados Visuais)
-    resDiscrepancia.innerText = formatarEuro(discrepancia);
+    // Simplificando o cálculo da BTOR: é geralmente a Comissão da Plataforma Retida.
+    // Em alguns modelos, pode ser Ganhos Brutos - Pagamentos Líquidos ao Motorista.
+    // Vamos usar a comissão retida para ser a base do que "deveria" ser faturado (BTOR)
+    const btor = comissaoPlataformaOperacionais;
     
-    // Muda a cor se a discrepância for negativa (erro) ou positiva (fraude)
-    if (discrepancia < 0) {
-        resDiscrepancia.style.color = 'green'; // Sem desvio aparente
-    } else {
-        resDiscrepancia.style.color = '#c62828'; // Vermelho alerta
-    }
+    // Atualizar o HTML
+    document.getElementById('btOperacionalResultado').textContent = btor.toFixed(2) + ' €';
+    document.getElementById('baseTributavelOperacional').value = btor;
+    document.getElementById('btorFinal').textContent = btor.toFixed(2) + ' €';
 
-    resPercentagem.innerText = percentagem.toFixed(2);
-    resIvaOmitido.innerText = formatarEuro(ivaOmitido);
-    
-    extrapolacaoAnual.innerText = formatarEuro(totalAnual);
-    extrapolacaoTotal.innerText = formatarEuro(totalLitigio);
+    // Chama o cálculo da Discrepância sempre que a BTOR muda
+    calcularDiscrepancia();
 }
 
-// Inicialização
-function iniciar() {
-    // Calcular imediatamente ao carregar a página
-    calcularAuditoria();
+// 2. Cálculo da Discrepância e Projeção Fiscal
+function calcularDiscrepancia() {
+    // Obter a BTOR (calculada na função anterior)
+    const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
+    
+    // Obter a Base Tributável Faturada (BTF) da Coluna 3
+    const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
+    
+    // Obter o contexto do mercado
+    const viaturasAtivas = parseFloat(document.getElementById('viaturasAtivas').value) || 1; // Evitar divisão por zero
 
-    // Adicionar "ouvintes" (listeners) para recalcular sempre que se digita algo
-    inputComissaoApp.addEventListener('input', calcularAuditoria);
-    inputFaturaDeclarada.addEventListener('input', calcularAuditoria);
-    inputMotoristasAtivos.addEventListener('input', calcularAuditoria);
+    // 3. CÁLCULO DA DISCREPÂNCIA
+    const discrepancia = btor - btf;
+    
+    // 4. CÁLCULO DO IVA POTENCIAL OMITIDO (6% sobre a discrepância)
+    const ivaPotencial = discrepancia * IVA_TAXA;
+    
+    // 5. PROJEÇÃO DE MERCADO (Omissão Média Mensal por Viatura * Viaturas Ativas)
+    const omissaoPorViatura = discrepancia; // Na amostra de uma viatura/mês
+    const valorOmitidoMercado = omissaoPorViatura * viaturasAtivas;
+
+    // --- Atualizar Resultados na Secção de Auditoria ---
+
+    // Resultados da Base Tributável
+    document.getElementById('btfFinal').textContent = btf.toFixed(2) + ' €';
+    
+    // Discrepância
+    document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
+    
+    // IVA Potencial Omitido
+    document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
+
+    // Projeção no Contexto de Mercado
+    document.getElementById('viaturasAtivasContexto').textContent = viaturasAtivas.toLocaleString('pt-PT');
+    document.getElementById('omissaoPorViatura').textContent = omissaoPorViatura.toFixed(2) + ' €';
+    document.getElementById('valorOmitidoMercado').textContent = valorOmitidoMercado.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
 }
 
-// Correr o script
-iniciar();
+// Associar a função de cálculo de discrepância aos inputs relevantes da Coluna 3
+document.getElementById('baseTributavelFaturada').addEventListener('input', calcularDiscrepancia);
+document.getElementById('viaturasAtivas').addEventListener('input', calcularDiscrepancia);
+
+// Também garantir que o resultado da BTF é atualizado se for introduzido manualmente
+document.getElementById('baseTributavelFaturada').addEventListener('input', () => {
+    const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
+    document.getElementById('btFaturadaResultado').textContent = btf.toFixed(2) + ' €';
+});
