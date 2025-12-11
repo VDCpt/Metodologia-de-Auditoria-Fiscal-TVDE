@@ -2,7 +2,7 @@
 
 ## EXECUTIVE SUMMARY
 
-Este repositório contém a metodologia e o código de auditoria desenvolvido pela Voz Do Condutor (VDC) para analisar uma **falha estrutural e sistémica** na retenção de comissões e na aplicação do IVA por parte das principais Plataformas de Mobilidade (TVDE) a operar em Portugal.
+Este repositório contém a metodologia e o código de auditoria desenvolvido pela (VDC) para analisar uma **falha estrutural e sistémica** na retenção de comissões e na aplicação do IVA por parte das principais Plataformas de Mobilidade (TVDE) a operar em Portugal.
 
 A análise baseia-se na comparação de duas fontes de dados:
 1.  **Retenções Operacionais Detalhadas** registadas nas aplicações dos motoristas (tempo real).
@@ -12,14 +12,14 @@ A discrepância identificada na **Base Tributável (IVA)** sugere um potencial m
 
 ---
 
-## 🏛️ Explicação do Algoritmo e Mecanismo para Advogados e Juízes
+## 🏛️ Explicação do Algoritimo e Mecanismo para Advogados e Juízes
 
 ### O Modelo de Negócio em Disputa
 
-As Plataformas de TVDE atuam como intermediárias. Em Portugal, a comissão cobrada aos motoristas (o serviço de intermediação) está sujeita a **IVA à taxa de 6%**.
+As Plataformas de TVDE atuam como intermediárias. Em Portugal, a comissão cobrada aos motoristas/Empresa (o serviço de intermediação) está sujeita a **IVA à taxa de 6%**.
 
 > #### Nota Crucial sobre a Responsabilidade do IVA da Viagem:
-> Ao abrigo da legislação portuguesa (Decreto-Lei n.º 106/2017), as Plataformas de TVDE emitem, em nome e por conta do motorista, a **Fatura Individual de Prestação de Serviço ao Passageiro**. O valor bruto dessa fatura (que inclui o IVA do serviço de transporte, geralmente 6% ou 23%) é considerado receita do motorista/empresa de TVDE.
+> Ao abrigo da legislação portuguesa (Decreto-Lei n.º 106/2017), as Plataformas de TVDE emitem, em nome e por conta do motorista/empresa, a **Fatura Individual de Prestação de Serviço ao Passageiro**. O valor bruto dessa fatura (que inclui o IVA do serviço de transporte, geralmente 6%) é considerado receita do motorista/empresa de TVDE.
 >
 > **Isto significa que o motorista/empresa é legalmente responsável por entregar esse IVA da receita total da viagem (o "Bruto") ao Estado português.** A Plataforma, por sua vez, já descontou a sua comissão (e outras taxas) desse valor. A dupla oneração ocorre porque, além de o motorista ter de pagar o IVA sobre a totalidade da receita, a Plataforma, na faturação da sua comissão, não trata o IVA (da comissão) de forma transparente e correta, levando à discrepância.
 
