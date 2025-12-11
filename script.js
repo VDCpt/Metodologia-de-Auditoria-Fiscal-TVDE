@@ -7,16 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
     calcularBaseTributavelOperacional();
 });
 
-// 1. Cálculo da Base Tributável Operacional Retida (BTOR)
+// 1. Cálculo da Base Tributável Operacional Retida (BTOR) e Ganhos Líquidos
 function calcularBaseTributavelOperacional() {
-    // Valores chave para a BTOR (Base Tributável Operacional Retida)
-    const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
-    const taxasReservaDeducoes = parseFloat(document.getElementById('taxasReservaDeducoes').value) || 0;
+    // --- Ganhos Brutos (Base para o cálculo Líquido) ---
+    const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
     
-    // A BTOR é a soma das comissões e taxas que são retidas pela Plataforma.
+    // --- Deduções ---
+    const taxasReservaDeducoes = parseFloat(document.getElementById('taxasReservaDeducoes').value) || 0;
+    const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
+    
+    // Outras deduções a considerar para Ganhos Líquidos (excluindo BTOR e incluindo pagamentosApp)
+    const pagamentosApp = parseFloat(document.getElementById('pagamentosApp').value) || 0;
+    const taxasReservaOperacionaisBruto = parseFloat(document.getElementById('taxasReservaOperacionaisBruto').value) || 0;
+    const gorjetasOperacionais = parseFloat(document.getElementById('gorjetasOperacionais').value) || 0;
+    
+    // Deduções Totais (Simples - Ajustar conforme a sua metodologia)
+    const deducoesTotais = (ganhosBrutos - pagamentosApp) + taxasReservaDeducoes;
+    
+    // --- Ganhos Líquidos ---
+    // Ganhos Líquidos = Pagamentos APP + Gorjetas - Deduções
+    // Alternativamente: Ganhos Líquidos = Ganhos Brutos - Comissão da Plataforma - Taxas - ...
+    // Usaremos uma simplificação para fins de demonstração da UI:
+    const ganhosLiquidos = ganhosBrutos - (comissaoPlataformaOperacionais + taxasReservaDeducoes);
+
+
+    // --- Cálculo da Base Tributável Operacional Retida (BTOR) ---
+    // BTOR é a soma das comissões e taxas que são retidas pela Plataforma.
     const btor = comissaoPlataformaOperacionais + taxasReservaDeducoes;
     
     // Atualizar o HTML
+    document.getElementById('ganhosLiquidosResultado').textContent = ganhosLiquidos.toFixed(2) + ' €';
     document.getElementById('btOperacionalResultado').textContent = btor.toFixed(2) + ' €';
     document.getElementById('baseTributavelOperacional').value = btor;
     document.getElementById('btorFinal').textContent = btor.toFixed(2) + ' €';
