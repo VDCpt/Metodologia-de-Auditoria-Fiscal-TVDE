@@ -89,11 +89,15 @@
             border: 1px dashed #d9534f;
             background-color: #fdd;
         }
-        .action-button {
-            display: block;
-            width: 100%;
-            padding: 15px;
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
             margin-top: 20px;
+        }
+        .action-button {
+            flex: 1;
+            padding: 15px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -101,12 +105,15 @@
             font-size: 1.1em;
             cursor: pointer;
         }
+        .action-button.calculate {
+            background-color: #28a745;
+        }
         .action-button:hover {
-            background-color: #0056b3;
+            opacity: 0.9;
         }
         @media print {
-            .action-button {
-                display: none; /* Não mostrar o botão de impressão no PDF/Impressão */
+            .button-container {
+                display: none; /* Não mostrar botões no PDF/Impressão */
             }
             .container {
                 box-shadow: none;
@@ -118,6 +125,7 @@
 
     <div class="container" id="printableArea">
         <h1>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</h1>
+        <h2>Prova Inatacável de Fraude Fiscal Estrutural</h2>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
         
         <hr>
@@ -162,7 +170,7 @@
                     <input type="number" id="portagensOperacionais" value="10" oninput="calcularBaseTributavelOperacional()">
                 </div>
                 <div class="input-group">
-                    <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (€):</label>
+                    <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (Bruto) (€):</label>
                     <input type="number" id="taxasReservaOperacionaisBruto" value="20" oninput="calcularBaseTributavelOperacional()">
                 </div>
                 
@@ -184,7 +192,7 @@
             </div>
 
             <div class="column">
-                <h3>3. Fatura Emitida (Fiscal)</h3>
+                <h3>2. Fatura Emitida (Fiscal)</h3>
                 
                 <div class="input-group">
                     <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
@@ -246,6 +254,10 @@
             <div class="discrepancy">
                 <span id="discrepanciaResultado">0.00 €</span>
             </div>
+             <div class="result-group">
+                <label>Percentagem de omissão (sobre o Operacional):</label>
+                <strong id="percentagemOmissao">0.00 %</strong>
+            </div>
             
             <div class="result-group">
                 <label>Valor potencial do IVA (6%) omitido nesta Discrepância:</label>
@@ -259,7 +271,10 @@
 
         </div>
         
-        <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF</button>
+        <div class="button-container">
+            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular</button>
+            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF</button>
+        </div>
 
     </div>
 
