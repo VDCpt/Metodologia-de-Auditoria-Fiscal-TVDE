@@ -1,5 +1,4 @@
 // VARIÁVEIS FIXAS (Para a Extrapolação de Litígio)
-const motoristasAtivos = 36000;
 const anosOperacao = 7;
 
 // Função para formatar números para EUR
@@ -10,6 +9,7 @@ const formatarEuro = (valor) => {
 // Elementos de Input
 const inputOperacional = document.getElementById('baseOperacional');
 const inputFaturada = document.getElementById('baseFaturada');
+const inputMotoristasAtivos = document.getElementById('motoristasAtivosInput');
 
 // Elementos de Output
 const omissaoMensalOutput = document.getElementById('omissaoMensal');
@@ -19,9 +19,10 @@ const potencialTotalOutput = document.getElementById('potencial-total');
 
 // Função Principal de Cálculo e Renderização
 function calcularDesvio() {
-    // Coleta valores (deve ser convertido para float, ou 0 se vazio)
+    // Coleta valores
     const totalBaseOperacional = parseFloat(inputOperacional.value) || 0;
     const baseFaturada = parseFloat(inputFaturada.value) || 0;
+    const motoristasAtivos = parseInt(inputMotoristasAtivos.value) || 0;
 
     // 1. CÁLCULO DA OMISSÃO MENSAL
     const omissaoMensal = totalBaseOperacional - baseFaturada;
@@ -32,7 +33,7 @@ function calcularDesvio() {
         percentagemOmisao = (omissaoMensal / totalBaseOperacional) * 100;
     }
 
-    // 3. CÁLCULO DA EXTRAPOLAÇÃO (€513M)
+    // 3. CÁLCULO DA EXTRAPOLAÇÃO (Baseado em novos inputs)
     const omissaoAnual = omissaoMensal * 12 * motoristasAtivos;
     const potencialTotalLitigio = omissaoAnual * anosOperacao;
 
@@ -43,13 +44,18 @@ function calcularDesvio() {
     potencialTotalOutput.textContent = formatarEuro(potencialTotalLitigio);
 }
 
-// Inicializa os valores e adiciona escutadores para atualizações dinâmicas
+// Adiciona escutadores de eventos para recalcular ao digitar
 function iniciarSimulador() {
-    calcularDesvio(); // Renderiza os valores iniciais (0.00)
-
-    // Adiciona escutadores de eventos para recalcular ao digitar
+    // Definir valores iniciais do seu pitch de €169.64
+    inputOperacional.value = '279.54';
+    inputFaturada.value = '110.90';
+    inputMotoristasAtivos.value = '36000';
+    
+    calcularDesvio(); // Renderiza os valores iniciais (€513M)
+    
     inputOperacional.addEventListener('input', calcularDesvio);
     inputFaturada.addEventListener('input', calcularDesvio);
+    inputMotoristasAtivos.addEventListener('input', calcularDesvio);
 }
 
 // Inicia o simulador
