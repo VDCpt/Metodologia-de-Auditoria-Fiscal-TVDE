@@ -35,11 +35,15 @@
             background: #ccc;
             margin: 20px 0;
         }
-        .header-info, .auth-info {
+        .header-info, .auth-info, .company-info {
             display: flex;
             justify-content: space-around;
             margin-bottom: 20px;
             font-weight: bold;
+            gap: 20px; /* Adicionado espaço entre os itens */
+        }
+        .header-info > div, .auth-info > div, .company-info > div {
+            flex: 1; /* Distribui o espaço igualmente */
         }
         .columns-container {
             display: flex;
@@ -192,10 +196,12 @@
                 display: none;
             }
 
+            .company-info input, .company-info select,
             .auth-info input, .header-info input {
                 display: none;
             }
-            .auth-info span, .header-info span {
+            /* Mostrar spans para impressão */
+            .company-info span, .auth-info span, .header-info span {
                 display: block !important; 
                 font-weight: normal;
                 text-align: center;
@@ -209,6 +215,25 @@
         <h1>Relatório de Auditoria Fiscal TVDE (VDC)</h1>
         <h2>Prova Fiscal Estrutural</h2>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
+        
+        <hr>
+
+        <div class="company-info">
+            <div class="input-group">
+                <label for="nomeEmpresa">Nome da Plataforma:</label>
+                <select id="nomeEmpresa">
+                    <option value="Uber">Uber</option>
+                    <option value="Bolt">Bolt</option>
+                    <option value="Outra">Outra</option>
+                </select>
+                <span id="nomeEmpresaPrint" style="display: none;">Uber</span>
+            </div>
+            <div class="input-group">
+                <label for="nifEmpresa">NIF da Plataforma (Sede Estrangeira):</label>
+                <input type="text" id="nifEmpresa" value="">
+                <span id="nifEmpresaPrint" style="display: none;"></span>
+            </div>
+        </div>
         
         <hr>
 
@@ -421,6 +446,27 @@
                     document.getElementById('autorAssinatura').innerText = novoNome;
                 });
             }
+
+            // 2. Inicialização e Listeners para a nova secção da Empresa
+            const nomeEmpresaSelect = document.getElementById('nomeEmpresa');
+            const nomeEmpresaPrint = document.getElementById('nomeEmpresaPrint');
+
+            // Valor inicial para impressão
+            nomeEmpresaPrint.innerText = nomeEmpresaSelect.value; 
+
+            // Listener para atualizar o nome da empresa na impressão
+            nomeEmpresaSelect.addEventListener('change', (e) => {
+                nomeEmpresaPrint.innerText = e.target.value;
+                // Não precisa de recálculo da Discrepância, é só informação textual
+            });
+
+            // Listener para NIF da empresa
+            const nifEmpresaInput = document.getElementById('nifEmpresa');
+            const nifEmpresaPrint = document.getElementById('nifEmpresaPrint');
+            nifEmpresaInput.addEventListener('input', (e) => {
+                nifEmpresaPrint.innerText = e.target.value;
+            });
+
             
             // Define o Mês/Ano para a impressão
             document.getElementById('mes').addEventListener('input', (e) => {
