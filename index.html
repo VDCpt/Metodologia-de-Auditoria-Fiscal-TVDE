@@ -1,72 +1,527 @@
-<style>
-    /* ... (CSS Geral - manter como está, exceto container) ... */
-    
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        padding: 0;
-        background-color: #f4f4f9;
-    }
-    .container {
-        /* Reduzir a largura máxima para se adequar melhor ao PDF antes da otimização */
-        max-width: 900px; /* Redução para 900px */
-        margin: 0 auto;
-        background-color: #fff;
-        padding: 25px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-    /* ... (Resto do CSS Geral) ... */
-
-    /* A SEÇÃO MAIS IMPORTANTE: MEDIA PRINT */
-    @media print {
-        /* 1. Resetar margens do corpo para maximizar o espaço */
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Auditoria Fiscal TVDE (VDC)</title>
+    <style>
         body {
-            margin: 0;
+            font-family: Arial, sans-serif;
+            margin: 20px;
             padding: 0;
-            background-color: #fff; /* Fundo branco para impressão */
+            background-color: #f4f4f9;
         }
-        
-        /* 2. Garantir que o container use 100% do espaço da página */
         .container {
-            max-width: 100%; /* Usar toda a largura disponível */
-            width: 100%;
-            margin: 0;
-            padding: 20px; /* Adicionar um padding leve para margem */
-            box-shadow: none; /* Remover sombra */
+            /* Largura otimizada para visualização no ecrã */
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
-
-        /* 3. Forçar as colunas a ocuparem 48% e evitar quebras indesejadas */
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            font-size: 1.1em;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
+        .header-info, .auth-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
         .columns-container {
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* Reduzir o gap para ter mais espaço */
+            gap: 30px;
+            margin-top: 30px;
         }
-        
         .column {
-            flex: 0 0 49%; /* Aumentar ligeiramente para evitar quebras */
-            padding: 10px; /* Reduzir padding interno da coluna */
-            box-sizing: border-box; /* Essencial para incluir padding na largura */
-            /* Se as colunas continuarem a quebrar, defina a largura para 100% e empilhe-as */
-            /* flex: 0 0 100%; */
+            flex: 0 0 48%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #ffffff;
         }
-
-        /* 4. Ocultar botões */
-        .button-container {
-            display: none;
+        .column h3 {
+            text-align: center;
+            color: #444;
+            margin-top: 0;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
         }
-
-        /* 5. Mostrar Autenticação e Inputs escondidos */
-        .auth-info input, .auth-info input[type="date"] {
-             display: none;
+        .input-group, .result-group {
+            margin-bottom: 15px;
         }
-        .auth-info span {
+        .input-group label {
             display: block;
-            font-weight: normal;
+            margin-bottom: 5px;
+            font-weight: 500;
         }
-        .auth-info .input-group {
-            flex-grow: 1;
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result-group {
+            padding: 15px;
+            border-top: 1px solid #ccc;
+            margin-top: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .result-group strong {
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+            font-size: 1.1em;
+        }
+        .auditoria-section {
+            margin-top: 40px;
+            padding: 25px;
+            border: 2px solid #a33;
+            background-color: #ffeaea;
+            border-radius: 8px;
+        }
+        .discrepancy {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #d9534f;
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px dashed #d9534f;
+            background-color: #fdd;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-button {
+            flex: 1;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-button.calculate {
+            background-color: #28a745;
+        }
+        .action-button:hover {
+            opacity: 0.9;
+        }
+        .auth-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
             text-align: center;
         }
-    }
-</style>
+        .signature-box {
+            border: 1px dashed #aaa;
+            width: 300px;
+            height: 100px;
+            margin: 20px auto 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* OTIMIZAÇÃO CRÍTICA PARA IMPRESSÃO/PDF */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
+            }
+            .container {
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 20px; 
+                box-shadow: none;
+            }
+
+            .columns-container {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                /* As colunas devem ter largura garantida */
+            }
+            
+            .column {
+                flex: 0 0 49%;
+                padding: 10px;
+                box-sizing: border-box;
+                border: 1px solid #eee; /* Cor mais clara na impressão */
+            }
+
+            .button-container {
+                display: none;
+            }
+
+            /* Esconder inputs editáveis e mostrar apenas o texto/valor */
+            .auth-info input {
+                 display: none;
+            }
+            .auth-info span {
+                display: block;
+                font-weight: normal;
+            }
+            .auth-info .input-group {
+                flex-grow: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="printableArea">
+        <h1>Relatório de Auditoria Fiscal TVDE (VDC)</h1>
+        <h2>Prova Fiscal Estrutural</h2>
+        <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
+        
+        <hr>
+
+        <div class="header-info">
+            <div class="input-group">
+                <label for="mes">Mês da Amostra:</label>
+                <input type="text" id="mes" value="Novembro">
+            </div>
+            <div class="input-group">
+                <label for="ano">Ano da Amostra:</label>
+                <input type="number" id="ano" value="2025">
+            </div>
+        </div>
+
+        <div class="auth-info">
+            <div class="input-group">
+                <label for="autor">Elaborado por:</label>
+                <input type="text" id="autor" value="[O SEU NOME]">
+                <span id="autorPrint" style="display: none;">[O SEU NOME]</span>
+            </div>
+            <div class="input-group">
+                <label for="dataEmissao">Data de Emissão:</label>
+                <input type="date" id="dataEmissao" value="">
+                <span id="dataEmissaoPrint" style="display: none;"></span>
+            </div>
+        </div>
+        
+        <hr>
+
+        <div class="columns-container">
+            <div class="column">
+                <h3>1. Ganhos na APP (Operacional)</h3>
+                
+                <div class="input-group">
+                    <label for="ganhosBrutos">Ganhos Brutos (€):</label>
+                    <input type="number" id="ganhosBrutos" value="1500">
+                </div>
+                <div class="input-group">
+                    <label for="pagamentosApp">Pagamentos APP (€):</label>
+                    <input type="number" id="pagamentosApp" value="1300">
+                </div>
+                <div class="input-group">
+                    <label for="campanhas">Campanhas (€):</label>
+                    <input type="number" id="campanhas" value="50">
+                </div>
+                <div class="input-group">
+                    <label for="taxasCancelamento">Taxas de Cancelamento (€):</label>
+                    <input type="number" id="taxasCancelamento" value="15">
+                </div>
+                <div class="input-group">
+                    <label for="gorjetasOperacionais">Gorjetas (€):</label>
+                    <input type="number" id="gorjetasOperacionais" value="20">
+                </div>
+                <div class="input-group">
+                    <label for="portagensOperacionais">Portagens (€):</label>
+                    <input type="number" id="portagensOperacionais" value="10">
+                </div>
+                <div class="input-group">
+                    <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (Bruto) (€):</label>
+                    <input type="number" id="taxasReservaOperacionaisBruto" value="20">
+                </div>
+                
+                <h4>Deduções operacionais</h4>
+                <div class="input-group">
+                    <label for="taxasReservaDeducoes">Taxas de Reserva (€):</label>
+                    <input type="number" id="taxasReservaDeducoes" value="15">
+                </div>
+                <div class="input-group">
+                    <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
+                    <input type="number" id="comissaoPlataformaOperacionais" value="300">
+                </div>
+                
+                <div class="result-group" style="background-color: #e6f7ff;">
+                    <label>Ganhos Líquidos (Estimativa) (€):</label>
+                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
+                </div>
+
+                <div class="result-group">
+                    <label>Base Tributável Operacional Retida (BTOR):</label>
+                    <strong id="btOperacionalResultado">0.00 €</strong>
+                    <input type="hidden" id="baseTributavelOperacional" value="0">
+                </div>
+            </div>
+
+            <div class="column">
+                <h3>2. Fatura Emitida (Fiscal)</h3>
+                
+                <div class="input-group">
+                    <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
+                    <input type="number" id="baseTributavelFaturada" value="280">
+                </div>
+
+                <div class="input-group">
+                    <label for="iva6">Tem IVA a 6%?</label>
+                    <select id="iva6">
+                        <option value="Não">Não</option>
+                        <option value="Sim">Sim</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="reverseCharge">Tem Autoliquidação de IVA (Reverse Charge)?</label>
+                    <select id="reverseCharge">
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+                
+                <div class="result-group" style="background-color: #fffbe6;">
+                    <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
+                    <strong id="btFaturadaResultado">280.00 €</strong>
+                </div>
+            </div>
+        </div>
+        
+        <hr style="margin-top: 40px; margin-bottom: 40px;">
+
+        <div class="auditoria-section">
+            <h2>5. Resultado da Auditoria e Discrepância Fiscal</h2>
+
+            <div class="input-group">
+                <label for="viaturasAtivas">Viaturas Ativas (Aprox.):</label>
+                <input type="number" id="viaturasAtivas" value="10000">
+            </div>
+            <div class="input-group">
+                <label for="motoristasAtivos">Motoristas Ativos (Aprox.):</label>
+                <input type="number" id="motoristasAtivos" value="36000">
+            </div>
+            
+            <br>
+            
+            <h3>BASE TRIBUTÁVEL (Amostra do Mês)</h3>
+            <div class="result-group">
+                <label>Total Base Tributável Operacional Retida (BTOR):</label>
+                <strong id="btorFinal">0.00 €</strong>
+            </div>
+            <div class="result-group">
+                <label>Base Tributável Faturada (BTF):</label>
+                <strong id="btfFinal">280.00 €</strong>
+            </div>
+
+            <br>
+
+            <h3>DISCREPANCIA (Omissão) da BASE TRIBUTÁVEL:</h3>
+            <div class="discrepancy">
+                <span id="discrepanciaResultado">0.00 €</span>
+            </div>
+             <div class="result-group">
+                <label>Percentagem de omissão (sobre o Operacional):</label>
+                <strong id="percentagemOmissao">0.00 %</strong>
+            </div>
+            
+            <div class="result-group">
+                <label>Valor potencial do IVA (6%) omitido nesta Discrepância:</label>
+                <strong id="ivaPotencialResultado">0.00 €</strong>
+            </div>
+            
+            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">36.000</span>), o potencial valor omitido seria vasto:</p>
+            
+            <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0.00 €</strong></p>
+            <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0.00 €</strong></p>
+
+        </div>
+        
+        <div class="auth-section">
+            <p><strong>Autenticação do Documento Analítico</strong></p>
+            <div class="signature-box">
+                Espaço para Assinatura Digital / Scanned
+            </div>
+            <p>___________________________________</p>
+            <p id="autorAssinatura">[O SEU NOME]</p>
+            <p>Autor da Metodologia e Análise</p>
+        </div>
+        <div class="button-container">
+            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular / Atualizar</button>
+            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF (Documento Analítico)</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Constante para o IVA (6%)
+        const IVA_TAXA = 0.06;
+        const MESES_ANO = 12;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Inicialização de Campos de Autenticação (Autor e Data)
+            const dataEmissaoInput = document.getElementById('dataEmissao');
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Define a data de emissão para a data de hoje por defeito
+            if (dataEmissaoInput) {
+                dataEmissaoInput.value = today;
+                document.getElementById('dataEmissaoPrint').innerText = today;
+            }
+
+            // Define o nome de assinatura inicial
+            const autorInput = document.getElementById('autor');
+            if (autorInput) {
+                const autorNome = autorInput.value || "[AUTOR DESCONHECIDO]";
+                document.getElementById('autorPrint').innerText = autorNome;
+                document.getElementById('autorAssinatura').innerText = autorNome;
+                
+                // Listener para atualizar o nome do autor/assinatura em tempo real
+                autorInput.addEventListener('input', () => {
+                    const novoNome = autorInput.value || "[AUTOR DESCONHECIDO]";
+                    document.getElementById('autorPrint').innerText = novoNome;
+                    document.getElementById('autorAssinatura').innerText = novoNome;
+                });
+            }
+
+            // 2. Inicialização dos Cálculos
+            calcularBaseTributavelOperacional();
+        });
+
+
+        // 1. Cálculo da Base Tributável Operacional Retida (BTOR) e Ganhos Líquidos
+        function calcularBaseTributavelOperacional() {
+            // --- Ganhos Brutos e Aditivos (Entrada do Motorista) ---
+            const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
+            const campanhas = parseFloat(document.getElementById('campanhas').value) || 0;
+            const taxasCancelamento = parseFloat(document.getElementById('taxasCancelamento').value) || 0;
+            const gorjetasOperacionais = parseFloat(document.getElementById('gorjetasOperacionais').value) || 0;
+            const portagensOperacionais = parseFloat(document.getElementById('portagensOperacionais').value) || 0;
+            // const taxasReservaOperacionaisBruto = parseFloat(document.getElementById('taxasReservaOperacionaisBruto').value) || 0;
+
+            // --- Deduções (Retenções da Plataforma - Base para a BTOR) ---
+            const taxasReservaDeducoes = parseFloat(document.getElementById('taxasReservaDeducoes').value) || 0;
+            const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
+
+            // --- CÁLCULO BASE TRIBUTÁVEL OPERACIONAL RETIDA (BTOR) ---
+            const btor = comissaoPlataformaOperacionais + taxasReservaDeducoes;
+
+            // --- CÁLCULO Ganhos Líquidos (Apenas informativo) ---
+            const ganhosLiquidos = 
+                ganhosBrutos - comissaoPlataformaOperacionais - taxasReservaDeducoes + 
+                campanhas + taxasCancelamento + gorjetasOperacionais + portagensOperacionais;
+                
+            // Atualizar o HTML
+            document.getElementById('ganhosLiquidosResultado').textContent = ganhosLiquidos.toFixed(2) + ' €';
+            document.getElementById('btOperacionalResultado').textContent = btor.toFixed(2) + ' €';
+            document.getElementById('baseTributavelOperacional').value = btor;
+            document.getElementById('btorFinal').textContent = btor.toFixed(2) + ' €';
+
+            // Chama o cálculo da Discrepância sempre que a BTOR muda
+            calcularDiscrepancia();
+        }
+
+        // 2. Cálculo da Discrepância e Projeção Fiscal
+        function calcularDiscrepancia() {
+            // Obter a BTOR (calculada na função anterior)
+            const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
+            
+            // Obter a Base Tributável Faturada (BTF) da Coluna 2
+            const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
+            
+            // Obter o contexto do mercado (usando Motoristas Ativos)
+            const motoristasAtivos = parseFloat(document.getElementById('motoristasAtivos').value) || 1; 
+
+            // --- CÁLCULO DA DISCREPÂNCIA ---
+            const discrepancia = btor - btf;
+            
+            // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
+            let percentagemOmissao = 0;
+            if (btor > 0) {
+                percentagemOmissao = (discrepancia / btor) * 100;
+            }
+            
+            // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
+            const ivaPotencial = discrepancia * IVA_TAXA;
+            
+            // --- PROJEÇÃO DE MERCADO ---
+            const omissaoPorMotorista = discrepancia; // Omissão da amostra
+            const valorOmitidoMensal = omissaoPorMotorista * motoristasAtivos;
+            const valorOmitidoAnual = valorOmitidoMensal * MESES_ANO;
+
+
+            // --- Atualizar Resultados na Secção de Auditoria ---
+            document.getElementById('btfFinal').textContent = btf.toFixed(2) + ' €';
+            document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
+            document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
+            document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
+
+            // Projeção no Contexto de Mercado (Formatado para EUR)
+            document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
+            document.getElementById('omissaoPorMotorista').textContent = omissaoPorMotorista.toFixed(2) + ' €';
+            
+            document.getElementById('valorOmitidoMensal').textContent = valorOmitidoMensal.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+            document.getElementById('valorOmitidoAnual').textContent = valorOmitidoAnual.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+        }
+
+        // --- Associações de Eventos (Otimizadas) ---
+
+        // Coluna 1: Inputs Operacionais (afetam BTOR)
+        const inputsOperacionais = ['ganhosBrutos', 'pagamentosApp', 'campanhas', 'taxasCancelamento', 'gorjetasOperacionais', 'portagensOperacionais', 'taxasReservaOperacionaisBruto', 'taxasReservaDeducoes', 'comissaoPlataformaOperacionais'];
+        inputsOperacionais.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', calcularBaseTributavelOperacional);
+            }
+        });
+
+        // Coluna 2 e Contexto: Inputs Fiscais e Mercado (afetam Discrepância)
+        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'iva6', 'reverseCharge', 'mes', 'ano'];
+        inputsDiscrepancia.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', calcularDiscrepancia);
+                element.addEventListener('change', calcularDiscrepancia); // Para selects
+            }
+        });
+
+        // Também garantir que o resultado da BTF é atualizado se for introduzido manualmente
+        document.getElementById('baseTributavelFaturada').addEventListener('input', () => {
+            const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
+            document.getElementById('btFaturadaResultado').textContent = btf.toFixed(2) + ' €';
+        });
+
+    </script>
+    </body>
+</html>
