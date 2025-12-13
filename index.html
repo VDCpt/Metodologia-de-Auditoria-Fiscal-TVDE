@@ -48,7 +48,7 @@
             margin-top: 30px;
         }
         .column {
-            flex: 0 0 48%; /* Mantém o 48% para o ecrã */
+            flex: 0 0 48%;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 6px;
@@ -152,7 +152,6 @@
 
         /* OTIMIZAÇÃO CRÍTICA PARA IMPRESSÃO/PDF (FORÇAR EMPILHAMENTO E MARGEM) */
         @media print {
-            
             /* 1. Resetar o corpo e o container */
             body {
                 margin: 0;
@@ -163,42 +162,39 @@
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
-                padding: 20px; /* Aumenta a margem do documento A4 (ajuste conforme necessário) */
+                padding: 10px; /* Margem leve para bordas do papel */
                 box-shadow: none;
-                box-sizing: border-box; /* Garante que o padding não exceda 100% da largura */
             }
 
             /* 2. CORREÇÃO DEFINITIVA: Forçar a quebra de linha total */
             .columns-container {
-                display: block; /* ESSENCIAL: Desativa o flex para impressão (força o empilhamento) */
+                display: block; /* Essencial: Desativa o flex para impressão */
                 width: 100%;
-                gap: 0; 
-                margin-top: 15px;
+                gap: 0; /* Remover espaçamento indesejado */
             }
             
             .column {
-                width: 100%; /* A coluna ocupa 100% da largura do container */
+                width: 100%; 
                 flex: none; 
-                margin: 15px 0; /* Espaço entre as colunas empilhadas */
+                margin: 10px 0; /* Espaço entre as colunas empilhadas */
                 padding: 15px;
                 box-sizing: border-box;
                 border: 1px solid #eee; 
-                page-break-inside: avoid; /* Tenta prevenir quebra de página dentro da coluna */
+                page-break-inside: avoid; /* Previne que a coluna se divida em duas páginas (resiliência) */
             }
             /* FIM DA CORREÇÃO DE EMPILHAMENTO */
 
-            /* 3. Esconder botões e inputs e mostrar spans (para imprimir só o valor) */
+            /* 3. Ajustes de Autenticação */
             .button-container {
                 display: none;
             }
 
             .auth-info input, .header-info input {
-                display: none;
+                 display: none;
             }
             .auth-info span, .header-info span {
-                display: block !important; /* Força o display: block para mostrar o valor em vez do input */
+                display: block;
                 font-weight: normal;
-                text-align: center;
             }
         }
     </style>
@@ -216,12 +212,10 @@
             <div class="input-group">
                 <label for="mes">Mês da Amostra:</label>
                 <input type="text" id="mes" value="Novembro">
-                <span id="mesPrint" style="display: none;">Novembro</span>
             </div>
             <div class="input-group">
                 <label for="ano">Ano da Amostra:</label>
                 <input type="number" id="ano" value="2025">
-                <span id="anoPrint" style="display: none;">2025</span>
             </div>
         </div>
 
@@ -336,9 +330,8 @@
                 <input type="number" id="viaturasAtivas" value="10000">
             </div>
             <div class="input-group">
-                <label for="motoristasAtivos">Motoristas Ativos (Aprox.):</label>
-                <input type="number" id="motoristasAtivos" value="36000">
-            </div>
+                <label for="motoristasAtivos">Motoristas Ativos (Média):</label>
+                <input type="number" id="motoristasAtivos" value="38638"> </div>
             
             <br>
             
@@ -358,7 +351,7 @@
             <div class="discrepancy">
                 <span id="discrepanciaResultado">0.00 €</span>
             </div>
-              <div class="result-group">
+             <div class="result-group">
                 <label>Percentagem de omissão (sobre o Operacional):</label>
                 <strong id="percentagemOmissao">0.00 %</strong>
             </div>
@@ -368,7 +361,7 @@
                 <strong id="ivaPotencialResultado">0.00 €</strong>
             </div>
             
-            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">36.000</span>), o potencial valor omitido seria vasto:</p>
+            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">38.638</span>), o potencial valor omitido seria vasto:</p>
             
             <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0.00 €</strong></p>
             <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0.00 €</strong></p>
@@ -421,16 +414,8 @@
                     document.getElementById('autorAssinatura').innerText = novoNome;
                 });
             }
-            
-            // Define o Mês/Ano para a impressão
-            document.getElementById('mes').addEventListener('input', (e) => {
-                document.getElementById('mesPrint').innerText = e.target.value;
-            });
-            document.getElementById('ano').addEventListener('input', (e) => {
-                document.getElementById('anoPrint').innerText = e.target.value;
-            });
-            
-            // Ativa o cálculo inicial
+
+            // 2. Inicialização dos Cálculos
             calcularBaseTributavelOperacional();
         });
 
@@ -522,7 +507,7 @@
         });
 
         // Coluna 2 e Contexto: Inputs Fiscais e Mercado (afetam Discrepância)
-        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'viaturasAtivas', 'iva6', 'reverseCharge', 'mes', 'ano'];
+        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'iva6', 'reverseCharge', 'mes', 'ano'];
         inputsDiscrepancia.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
@@ -535,7 +520,6 @@
         document.getElementById('baseTributavelFaturada').addEventListener('input', () => {
             const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
             document.getElementById('btFaturadaResultado').textContent = btf.toFixed(2) + ' €';
-            calcularDiscrepancia(); // Garante que a discrepância é recalculada ao atualizar a BTF
         });
 
     </script>
