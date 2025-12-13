@@ -1,354 +1,72 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Auditoria Fiscal TVDE (VDC)</title>
-    <style>
+<style>
+    /* ... (CSS Geral - manter como está, exceto container) ... */
+    
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+        background-color: #f4f4f9;
+    }
+    .container {
+        /* Reduzir a largura máxima para se adequar melhor ao PDF antes da otimização */
+        max-width: 900px; /* Redução para 900px */
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 25px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    /* ... (Resto do CSS Geral) ... */
+
+    /* A SEÇÃO MAIS IMPORTANTE: MEDIA PRINT */
+    @media print {
+        /* 1. Resetar margens do corpo para maximizar o espaço */
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #fff; /* Fundo branco para impressão */
         }
+        
+        /* 2. Garantir que o container use 100% do espaço da página */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 25px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            max-width: 100%; /* Usar toda a largura disponível */
+            width: 100%;
+            margin: 0;
+            padding: 20px; /* Adicionar um padding leve para margem */
+            box-shadow: none; /* Remover sombra */
         }
-        h1, h2 {
-            text-align: center;
-            color: #333;
-        }
-        h2 {
-            font-size: 1.1em;
-            margin-top: 5px;
-            margin-bottom: 20px;
-        }
-        hr {
-            border: 0;
-            height: 1px;
-            background: #ccc;
-            margin: 20px 0;
-        }
-        .header-info, .auth-info { /* Adicionada classe auth-info */
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
+
+        /* 3. Forçar as colunas a ocuparem 48% e evitar quebras indesejadas */
         .columns-container {
             display: flex;
             justify-content: space-between;
-            gap: 30px;
-            margin-top: 30px;
+            gap: 10px; /* Reduzir o gap para ter mais espaço */
         }
+        
         .column {
-            flex: 0 0 48%;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background-color: #ffffff;
+            flex: 0 0 49%; /* Aumentar ligeiramente para evitar quebras */
+            padding: 10px; /* Reduzir padding interno da coluna */
+            box-sizing: border-box; /* Essencial para incluir padding na largura */
+            /* Se as colunas continuarem a quebrar, defina a largura para 100% e empilhe-as */
+            /* flex: 0 0 100%; */
         }
-        .column h3 {
-            text-align: center;
-            color: #444;
-            margin-top: 0;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-        }
-        .input-group, .result-group {
-            margin-bottom: 15px;
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .result-group {
-            padding: 15px;
-            border-top: 1px solid #ccc;
-            margin-top: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        .result-group strong {
-            font-weight: bold;
-            display: block;
-            margin-top: 5px;
-            font-size: 1.1em;
-        }
-        .auditoria-section {
-            margin-top: 40px;
-            padding: 25px;
-            border: 2px solid #a33;
-            background-color: #ffeaea;
-            border-radius: 8px;
-        }
-        .discrepancy {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #d9534f;
-            margin: 15px 0;
-            padding: 15px;
-            border: 1px dashed #d9534f;
-            background-color: #fdd;
-            text-align: center;
-            border-radius: 4px;
-        }
+
+        /* 4. Ocultar botões */
         .button-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 30px;
+            display: none;
         }
-        .action-button {
-            flex: 1;
-            padding: 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
+
+        /* 5. Mostrar Autenticação e Inputs escondidos */
+        .auth-info input, .auth-info input[type="date"] {
+             display: none;
         }
-        .action-button.calculate {
-            background-color: #28a745;
+        .auth-info span {
+            display: block;
+            font-weight: normal;
         }
-        .action-button:hover {
-            opacity: 0.9;
-        }
-        .auth-section { /* Estilos para a seção de Autenticação */
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #ccc;
+        .auth-info .input-group {
+            flex-grow: 1;
             text-align: center;
         }
-        .signature-box {
-            border: 1px dashed #aaa;
-            width: 300px;
-            height: 100px;
-            margin: 20px auto 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9em;
-            color: #666;
-        }
-        @media print {
-            .button-container, .auth-info input { /* Ocultar botões e inputs de info na impressão */
-                display: none;
-            }
-            .auth-info span { /* Mostrar as informações na impressão */
-                display: block;
-            }
-            .container {
-                box-shadow: none;
-                padding: 0;
-            }
-            body {
-                margin: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container" id="printableArea">
-        <h1>Relatório de Auditoria Fiscal TVDE (VDC)</h1>
-        <h2>Prova Fiscal Estrutural</h2>
-        <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
-        
-        <hr>
-
-        <div class="header-info">
-            <div class="input-group">
-                <label for="mes">Mês da Amostra:</label>
-                <input type="text" id="mes" value="Novembro" oninput="calcularDiscrepancia()">
-            </div>
-            <div class="input-group">
-                <label for="ano">Ano da Amostra:</label>
-                <input type="number" id="ano" value="2025" oninput="calcularDiscrepancia()">
-            </div>
-        </div>
-
-        <div class="auth-info">
-            <div class="input-group">
-                <label for="autor">Elaborado por:</label>
-                <input type="text" id="autor" value="[O SEU NOME]" oninput="document.getElementById('autorPrint').innerText=this.value;">
-                <span id="autorPrint" style="display: none;">[O SEU NOME]</span> </div>
-            <div class="input-group">
-                <label for="dataEmissao">Data de Emissão:</label>
-                <input type="date" id="dataEmissao" value="2025-12-13" oninput="document.getElementById('dataEmissaoPrint').innerText=this.value;">
-                <span id="dataEmissaoPrint" style="display: none;">2025-12-13</span> </div>
-        </div>
-        <hr>
-
-        <div class="columns-container">
-            <div class="column">
-                <h3>1. Ganhos na APP (Operacional)</h3>
-                
-                <div class="input-group">
-                    <label for="ganhosBrutos">Ganhos Brutos (€):</label>
-                    <input type="number" id="ganhosBrutos" value="1500" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="pagamentosApp">Pagamentos APP (€):</label>
-                    <input type="number" id="pagamentosApp" value="1300" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="campanhas">Campanhas (€):</label>
-                    <input type="number" id="campanhas" value="50" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="taxasCancelamento">Taxas de Cancelamento (€):</label>
-                    <input type="number" id="taxasCancelamento" value="15" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="gorjetasOperacionais">Gorjetas (€):</label>
-                    <input type="number" id="gorjetasOperacionais" value="20" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="portagensOperacionais">Portagens (€):</label>
-                    <input type="number" id="portagensOperacionais" value="10" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (Bruto) (€):</label>
-                    <input type="number" id="taxasReservaOperacionaisBruto" value="20" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                
-                <h4>Deduções operacionais</h4>
-                <div class="input-group">
-                    <label for="taxasReservaDeducoes">Taxas de Reserva (€):</label>
-                    <input type="number" id="taxasReservaDeducoes" value="15" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                <div class="input-group">
-                    <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
-                    <input type="number" id="comissaoPlataformaOperacionais" value="300" oninput="calcularBaseTributavelOperacional()">
-                </div>
-                
-                <div class="result-group" style="background-color: #e6f7ff;">
-                    <label>Ganhos Líquidos (Estimativa) (€):</label>
-                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
-                </div>
-
-                <div class="result-group">
-                    <label>Base Tributável Operacional Retida (BTOR):</label>
-                    <strong id="btOperacionalResultado">0.00 €</strong>
-                    <input type="hidden" id="baseTributavelOperacional" value="0">
-                </div>
-            </div>
-
-            <div class="column">
-                <h3>2. Fatura Emitida (Fiscal)</h3>
-                
-                <div class="input-group">
-                    <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
-                    <input type="number" id="baseTributavelFaturada" value="280" oninput="calcularDiscrepancia()">
-                </div>
-
-                <div class="input-group">
-                    <label for="iva6">Tem IVA a 6%?</label>
-                    <select id="iva6" onchange="calcularDiscrepancia()">
-                        <option value="Não">Não</option>
-                        <option value="Sim">Sim</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label for="reverseCharge">Tem Autoliquidação de IVA (Reverse Charge)?</label>
-                    <select id="reverseCharge" onchange="calcularDiscrepancia()">
-                        <option value="Sim">Sim</option>
-                        <option value="Não">Não</option>
-                    </select>
-                </div>
-                
-                <div class="result-group" style="background-color: #fffbe6;">
-                    <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
-                    <strong id="btFaturadaResultado">280.00 €</strong>
-                </div>
-            </div>
-        </div>
-        
-        <hr style="margin-top: 40px; margin-bottom: 40px;">
-
-        <div class="auditoria-section">
-            <h2>5. Resultado da Auditoria e Discrepância Fiscal</h2>
-
-            <div class="input-group">
-                <label for="viaturasAtivas">Viaturas Ativas (Aprox.):</label>
-                <input type="number" id="viaturasAtivas" value="10000" oninput="calcularDiscrepancia()">
-            </div>
-            <div class="input-group">
-                <label for="motoristasAtivos">Motoristas Ativos (Aprox.):</label>
-                <input type="number" id="motoristasAtivos" value="36000" oninput="calcularDiscrepancia()">
-            </div>
-            
-            <br>
-            
-            <h3>BASE TRIBUTÁVEL (Amostra do Mês)</h3>
-            <div class="result-group">
-                <label>Total Base Tributável Operacional Retida (BTOR):</label>
-                <strong id="btorFinal">0.00 €</strong>
-            </div>
-            <div class="result-group">
-                <label>Base Tributável Faturada (BTF):</label>
-                <strong id="btfFinal">280.00 €</strong>
-            </div>
-
-            <br>
-
-            <h3>DISCREPANCIA (Omissão) da BASE TRIBUTÁVEL:</h3>
-            <div class="discrepancy">
-                <span id="discrepanciaResultado">0.00 €</span>
-            </div>
-             <div class="result-group">
-                <label>Percentagem de omissão (sobre o Operacional):</label>
-                <strong id="percentagemOmissao">0.00 %</strong>
-            </div>
-            
-            <div class="result-group">
-                <label>Valor potencial do IVA (6%) omitido nesta Discrepância:</label>
-                <strong id="ivaPotencialResultado">0.00 €</strong>
-            </div>
-            
-            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">36.000</span>), o potencial valor omitido seria vasto:</p>
-            
-            <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0.00 €</strong></p>
-            <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0.00 €</strong></p>
-
-        </div>
-        
-        <div class="auth-section">
-            <p><strong>Autenticação do Documento Analítico</strong></p>
-            <div class="signature-box">
-                Espaço para Assinatura Digital / Scanned
-            </div>
-            <p>___________________________________</p>
-            <p id="autorAssinatura">[O SEU NOME]</p>
-            <p>Autor da Metodologia e Análise</p>
-        </div>
-        <div class="button-container">
-            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular / Atualizar</button>
-            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF (Documento Analítico)</button>
-        </div>
-
-    </div>
-
-    <script src="script.js"></script>
-
-</body>
-</html>
+    }
+</style>
