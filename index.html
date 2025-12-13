@@ -20,9 +20,20 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
         }
-        h1, h2 {
+        h1, h2, h0-filename { /* Adicionei um estilo para o nome do ficheiro */
             text-align: center;
             color: #333;
+        }
+        h0-filename {
+            display: block;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 25px;
+            padding: 10px;
+            border: 1px dashed #007bff;
+            background-color: #e6f7ff;
+            border-radius: 4px;
         }
         h2 {
             font-size: 1.1em;
@@ -213,6 +224,7 @@
 
     <div class="container" id="printableArea">
         <h1>Relatório de Auditoria Fiscal TVDE (VDC)</h1>
+        <h0-filename id="filenameTitle">NOME DO FICHEIRO: 2025_MM_PLATAFORMA_ID_ANALISE.pdf</h0-filename>
         <h2>Prova Fiscal Estrutural</h2>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
         
@@ -239,12 +251,17 @@
 
         <div class="header-info">
             <div class="input-group">
-                <label for="mes">Mês da Amostra:</label>
+                <label for="idProcesso">ID da Amostra/Processo (e.g., ID1234):</label>
+                <input type="text" id="idProcesso" value="">
+                <span id="idProcessoPrint" style="display: none;"></span>
+            </div>
+            <div class="input-group">
+                <label for="mes">Mês da Amostra (e.g., JAN):</label>
                 <input type="text" id="mes" value="">
                 <span id="mesPrint" style="display: none;"></span>
             </div>
             <div class="input-group">
-                <label for="ano">Ano da Amostra:</label>
+                <label for="ano">Ano da Amostra (e.g., 2025):</label>
                 <input type="number" id="ano" value="">
                 <span id="anoPrint" style="display: none;"></span>
             </div>
@@ -411,7 +428,7 @@
         </div>
         <div class="button-container">
             <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular / Atualizar</button>
-            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF (Documento Analítico)</button>
+            <button class="action-button" onclick="imprimirRelatorio()">Imprimir / Gerar PDF (Documento Analítico)</button>
         </div>
 
     </div>
@@ -447,34 +464,48 @@
                 });
             }
 
-            // 2. Inicialização e Listeners para a nova secção da Empresa
+            // 2. Inicialização e Listeners para a nova secção da Empresa e Ficheiro
             const nomeEmpresaSelect = document.getElementById('nomeEmpresa');
-            const nomeEmpresaPrint = document.getElementById('nomeEmpresaPrint');
-
-            // Valor inicial para impressão
-            nomeEmpresaPrint.innerText = nomeEmpresaSelect.value; 
-
-            // Listener para atualizar o nome da empresa na impressão
-            nomeEmpresaSelect.addEventListener('change', (e) => {
-                nomeEmpresaPrint.innerText = e.target.value;
-                // Não precisa de recálculo da Discrepância, é só informação textual
-            });
-
-            // Listener para NIF da empresa
             const nifEmpresaInput = document.getElementById('nifEmpresa');
-            const nifEmpresaPrint = document.getElementById('nifEmpresaPrint');
+            const idProcessoInput = document.getElementById('idProcesso');
+            const mesInput = document.getElementById('mes');
+            const anoInput = document.getElementById('ano');
+
+            // Listeners para atualizar o nome do ficheiro e campos de impressão
+            function updateFilename() {
+                const ano = anoInput.value || 'AAAA';
+                const mes = (mesInput.value || 'MM').toUpperCase();
+                const plataforma = nomeEmpresaSelect.value || 'PLATAFORMA';
+                const idProcesso = (idProcessoInput.value || 'ID').toUpperCase().replace(/[^A-Z0-9]/g, ''); // Limpa caracteres especiais
+                
+                const filename = `${ano}_${mes}_${plataforma.toUpperCase()}_${idProcesso}_ANALISE.pdf`;
+                document.getElementById('filenameTitle').textContent = `NOME DO FICHEIRO: ${filename}`;
+            }
+
+            // Atribuir listeners
+            nomeEmpresaSelect.addEventListener('change', (e) => {
+                document.getElementById('nomeEmpresaPrint').innerText = e.target.value;
+                updateFilename();
+            });
             nifEmpresaInput.addEventListener('input', (e) => {
-                nifEmpresaPrint.innerText = e.target.value;
+                document.getElementById('nifEmpresaPrint').innerText = e.target.value;
+            });
+            idProcessoInput.addEventListener('input', (e) => {
+                document.getElementById('idProcessoPrint').innerText = e.target.value;
+                updateFilename();
+            });
+            mesInput.addEventListener('input', (e) => {
+                document.getElementById('mesPrint').innerText = e.target.value;
+                updateFilename();
+            });
+            anoInput.addEventListener('input', (e) => {
+                document.getElementById('anoPrint').innerText = e.target.value;
+                updateFilename();
             });
 
-            
-            // Define o Mês/Ano para a impressão
-            document.getElementById('mes').addEventListener('input', (e) => {
-                document.getElementById('mesPrint').innerText = e.target.value;
-            });
-            document.getElementById('ano').addEventListener('input', (e) => {
-                document.getElementById('anoPrint').innerText = e.target.value;
-            });
+            // Inicialização da impressão
+            document.getElementById('nomeEmpresaPrint').innerText = nomeEmpresaSelect.value;
+            updateFilename();
             
             // Ativa o cálculo inicial
             calcularBaseTributavelOperacional();
@@ -562,6 +593,19 @@
             document.getElementById('valorOmitidoAnual').textContent = formatCurrency(valorOmitidoAnual);
         }
 
+        // Função para imprimir o relatório com o nome do ficheiro (para o utilizador salvar)
+        function imprimirRelatorio() {
+            // Captura o nome do ficheiro gerado
+            const filenameText = document.getElementById('filenameTitle').textContent.replace('NOME DO FICHEIRO: ', '');
+            
+            // A maioria dos navegadores não permite alterar o nome do ficheiro diretamente via JavaScript
+            // A melhor prática é informar o utilizador e depois chamar a impressão.
+            alert(`Atenção: Por favor, salve o ficheiro PDF gerado com o nome sugerido:\n\n${filenameText}`);
+            
+            window.print();
+        }
+
+
         // --- Associações de Eventos (Otimizadas) ---
 
         // Coluna 1: Inputs Operacionais (afetam BTOR)
@@ -574,7 +618,7 @@
         });
 
         // Coluna 2 e Contexto: Inputs Fiscais e Mercado (afetam Discrepância)
-        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'viaturasAtivas', 'iva6', 'reverseCharge', 'mes', 'ano'];
+        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'viaturasAtivas', 'iva6', 'reverseCharge'];
         inputsDiscrepancia.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
