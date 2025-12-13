@@ -150,8 +150,9 @@
             color: #666;
         }
 
-        /* OTIMIZAÇÃO CRÍTICA PARA IMPRESSÃO/PDF (FORÇAR EMPILHAMENTO) */
+        /* OTIMIZAÇÃO CRÍTICA PARA IMPRESSÃO/PDF (FORÇAR EMPILHAMENTO E MARGEM) */
         @media print {
+            /* 1. Resetar o corpo e o container */
             body {
                 margin: 0;
                 padding: 0;
@@ -161,40 +162,39 @@
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
-                padding: 20px; 
+                padding: 10px; /* Margem leve para bordas do papel */
                 box-shadow: none;
             }
 
-            /* CORREÇÃO DEFINITIVA: Desativa a disposição lado a lado na impressão */
+            /* 2. CORREÇÃO DEFINITIVA: Forçar a quebra de linha total */
             .columns-container {
-                display: block; 
+                display: block; /* Essencial: Desativa o flex para impressão */
+                width: 100%;
+                gap: 0; /* Remover espaçamento indesejado */
             }
             
             .column {
                 width: 100%; 
                 flex: none; 
-                margin-bottom: 20px; 
-                padding: 10px;
+                margin: 10px 0; /* Espaço entre as colunas empilhadas */
+                padding: 15px;
                 box-sizing: border-box;
                 border: 1px solid #eee; 
+                page-break-inside: avoid; /* Previne que a coluna se divida em duas páginas (resiliência) */
             }
             /* FIM DA CORREÇÃO DE EMPILHAMENTO */
 
+            /* 3. Ajustes de Autenticação */
             .button-container {
                 display: none;
             }
 
-            /* Esconder inputs editáveis e mostrar apenas o texto/valor */
-            .auth-info input {
+            .auth-info input, .header-info input {
                  display: none;
             }
-            .auth-info span {
+            .auth-info span, .header-info span {
                 display: block;
                 font-weight: normal;
-            }
-            .auth-info .input-group {
-                flex-grow: 1;
-                text-align: center;
             }
         }
     </style>
