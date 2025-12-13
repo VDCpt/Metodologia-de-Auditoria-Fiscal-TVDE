@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</title>
+    <title>Relatório de Auditoria Fiscal TVDE (VDC)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             max-width: 1200px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 25px; /* Margem interna ligeiramente aumentada */
+            padding: 25px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
         }
@@ -34,7 +34,7 @@
             background: #ccc;
             margin: 20px 0;
         }
-        .header-info {
+        .header-info, .auth-info { /* Adicionada classe auth-info */
             display: flex;
             justify-content: space-around;
             margin-bottom: 20px;
@@ -43,12 +43,12 @@
         .columns-container {
             display: flex;
             justify-content: space-between;
-            gap: 30px; /* Aumento do espaço entre colunas */
+            gap: 30px;
             margin-top: 30px;
         }
         .column {
             flex: 0 0 48%;
-            padding: 20px; /* Margem interna da coluna */
+            padding: 20px;
             border: 1px solid #ddd;
             border-radius: 6px;
             background-color: #ffffff;
@@ -63,7 +63,7 @@
             font-size: 1.2em;
         }
         .input-group, .result-group {
-            margin-bottom: 15px; /* Aumento da margem entre grupos */
+            margin-bottom: 15px;
         }
         .input-group label {
             display: block;
@@ -131,9 +131,29 @@
         .action-button:hover {
             opacity: 0.9;
         }
+        .auth-section { /* Estilos para a seção de Autenticação */
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            text-align: center;
+        }
+        .signature-box {
+            border: 1px dashed #aaa;
+            width: 300px;
+            height: 100px;
+            margin: 20px auto 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            color: #666;
+        }
         @media print {
-            .button-container {
+            .button-container, .auth-info input { /* Ocultar botões e inputs de info na impressão */
                 display: none;
+            }
+            .auth-info span { /* Mostrar as informações na impressão */
+                display: block;
             }
             .container {
                 box-shadow: none;
@@ -148,7 +168,7 @@
 <body>
 
     <div class="container" id="printableArea">
-        <h1>Prova de Autenticação Auditoria Fiscal TVDE (VDC)</h1>
+        <h1>Relatório de Auditoria Fiscal TVDE (VDC)</h1>
         <h2>Prova Fiscal Estrutural</h2>
         <h2>Metodologia de Análise Detalhada para comparação das Retenções Operacionais vs. Faturação Fiscal.</h2>
         
@@ -164,6 +184,18 @@
                 <input type="number" id="ano" value="2025" oninput="calcularDiscrepancia()">
             </div>
         </div>
+
+        <div class="auth-info">
+            <div class="input-group">
+                <label for="autor">Elaborado por:</label>
+                <input type="text" id="autor" value="[O SEU NOME]" oninput="document.getElementById('autorPrint').innerText=this.value;">
+                <span id="autorPrint" style="display: none;">[O SEU NOME]</span> </div>
+            <div class="input-group">
+                <label for="dataEmissao">Data de Emissão:</label>
+                <input type="date" id="dataEmissao" value="2025-12-13" oninput="document.getElementById('dataEmissaoPrint').innerText=this.value;">
+                <span id="dataEmissaoPrint" style="display: none;">2025-12-13</span> </div>
+        </div>
+        <hr>
 
         <div class="columns-container">
             <div class="column">
@@ -230,7 +262,7 @@
 
                 <div class="input-group">
                     <label for="iva6">Tem IVA a 6%?</label>
-                    <select id="iva6">
+                    <select id="iva6" onchange="calcularDiscrepancia()">
                         <option value="Não">Não</option>
                         <option value="Sim">Sim</option>
                     </select>
@@ -238,7 +270,7 @@
                 
                 <div class="input-group">
                     <label for="reverseCharge">Tem Autoliquidação de IVA (Reverse Charge)?</label>
-                    <select id="reverseCharge">
+                    <select id="reverseCharge" onchange="calcularDiscrepancia()">
                         <option value="Sim">Sim</option>
                         <option value="Não">Não</option>
                     </select>
@@ -300,9 +332,18 @@
 
         </div>
         
+        <div class="auth-section">
+            <p><strong>Autenticação do Documento Analítico</strong></p>
+            <div class="signature-box">
+                Espaço para Assinatura Digital / Scanned
+            </div>
+            <p>___________________________________</p>
+            <p id="autorAssinatura">[O SEU NOME]</p>
+            <p>Autor da Metodologia e Análise</p>
+        </div>
         <div class="button-container">
-            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular</button>
-            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF</button>
+            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular / Atualizar</button>
+            <button class="action-button" onclick="window.print()">Imprimir / Gerar PDF (Documento Analítico)</button>
         </div>
 
     </div>
