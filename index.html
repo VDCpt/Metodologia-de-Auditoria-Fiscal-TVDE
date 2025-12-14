@@ -218,6 +218,19 @@
                 font-weight: normal;
                 text-align: center;
             }
+            /* Esconder a secção de input dos ganhos líquidos para impressão */
+            #ganhosLiquidosInput {
+                display: none;
+            }
+
+            /* Mostrar o resultado dos ganhos líquidos para impressão */
+            #ganhosLiquidosPrint {
+                display: block !important;
+                font-weight: bold;
+                margin-top: 5px;
+                font-size: 1.1em;
+                color: #333;
+            }
         }
     </style>
 </head>
@@ -326,11 +339,11 @@
                     <input type="number" id="comissaoPlataformaOperacionais" value="400">
                 </div>
                 
-                <div class="result-group" style="background-color: #e6f7ff;">
-                    <label>Ganhos Líquidos (Estimativa) (€):</label>
-                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
+                <div class="input-group" style="background-color: #e6f7ff;">
+                    <label for="ganhosLiquidosInput">Ganhos Líquidos (Apurado na APP) (€):</label>
+                    <input type="number" id="ganhosLiquidosInput" value="968.02">
+                    <span id="ganhosLiquidosPrint" style="display: none;">968.02 €</span>
                 </div>
-
                 <div class="result-group">
                     <label>Base Tributável Operacional Retida (BTOR):</label>
                     <strong id="btOperacionalResultado">0.00 €</strong>
@@ -421,19 +434,19 @@
         <div class="auth-section">
             <p><strong>Autenticação do Documento Analítico</strong></p>
             <div class="signature-box">
-                Assinatura Digital / Assinatura - Carimbo
+                Espaço para Assinatura Digital / Scanned
             </div>
             <p>___________________________________</p>
             <p id="autorAssinatura">[INSIRA O NOME]</p>
             <p>Autor da Metodologia e Análise</p>
         </div>
         <div class="button-container">
-            <button class="action-button calculate">Calcular / Atualizar</button>
-            <button class="action-button">Imprimir / Gerar PDF (Documento Analítico)</button>
+            <button class="action-button calculate" id="calculateButton">Calcular / Atualizar</button>
+            <button class="action-button" id="printButton">Imprimir / Gerar PDF (Documento Analítico)</button>
         </div>
 
     </div>
     
     <script src="script.js"></script>
-    </body>
+</body>
 </html>
