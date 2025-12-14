@@ -242,7 +242,7 @@
                 <span id="nomeEmpresaPrint" style="display: none;">Uber</span>
             </div>
             <div class="input-group">
-                <label for="nifEmpresa">NIF da Plataforma (Sede Estrangeira):</label>
+                <label for="nifEmpresa">NIPC da Plataforma (Sede Estrangeira):</label>
                 <input type="text" id="nifEmpresa" value="">
                 <span id="nifEmpresaPrint" style="display: none;"></span>
             </div>
@@ -562,10 +562,13 @@
             // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
             let percentagemOmissao = 0;
             if (btor !== 0) {
+                // A percentagem deve usar o valor absoluto da discrepância se a intenção for mostrar a magnitude
+                // Mas, mantemos a discrepância com sinal para refletir se é omissão (+ ) ou excesso (-).
                 percentagemOmissao = (discrepancia / btor) * 100;
             }
             
             // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
+            // O IVA potencial só é calculado se houver uma omissão (discrepancia > 0)
             const ivaPotencial = (discrepancia > 0 ? discrepancia : 0) * IVA_TAXA;
             
             // --- PROJEÇÃO DE MERCADO ---
@@ -587,7 +590,8 @@
             document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
             
             const formatCurrency = (value) => {
-                // A omissão potencial no mercado (projeção) é 0 se a discrepância for negativa
+                // CORREÇÃO: A omissão potencial no mercado (projeção) é 0 se a discrepância por motorista for negativa.
+                // Usamos Math.max(0, ...) para garantir que os valores projetados de omissão são sempre não-negativos.
                 return (Math.max(0, value)).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
             };
             
