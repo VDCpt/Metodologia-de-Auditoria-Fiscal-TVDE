@@ -1,6 +1,20 @@
 // Constante para o IVA (6%)
 const IVA_TAXA = 0.06;
 const MESES_ANO = 12;
+const DEFAULT_MOTORISTAS = 38638; // Usado para fallback caso o campo esteja vazio/inválido.
+
+/**
+ * Função utilitária para formatar valores monetários em EUR.
+ * Garante que a projeção de omissão é sempre não-negativa.
+ * @param {number} value O valor a ser formatado.
+ * @param {boolean} allowNegative Se negativo deve ser permitido (Usado para a Discrepância de Amostra, mas não para a Projeção de Mercado).
+ * @returns {string} O valor formatado.
+ */
+function formatCurrency(value, allowNegative = false) {
+    const finalValue = allowNegative ? value : Math.max(0, value);
+    return finalValue.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+}
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicialização de Campos de Autenticação (Autor e Data)
@@ -78,22 +92,23 @@ function calcularDiscrepancia() {
     const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
     
     // Obter o contexto do mercado (usando Motoristas Ativos)
-    const motoristasAtivos = parseFloat(document.getElementById('motoristasAtivos').value) || 1; 
+    const motoristasAtivos = parseFloat(document.getElementById('motoristasAtivos').value) || DEFAULT_MOTORISTAS; 
 
     // --- CÁLCULO DA DISCREPÂNCIA ---
     const discrepancia = btor - btf;
     
     // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
     let percentagemOmissao = 0;
-    if (btor > 0) {
+    if (btor !== 0) {
         percentagemOmissao = (discrepancia / btor) * 100;
     }
     
     // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
-    const ivaPotencial = discrepancia * IVA_TAXA;
+    // O IVA potencial só é cobrado sobre a parte que está a ser omitida (discrepancia > 0)
+    const ivaPotencial = (discrepancia > 0 ? discrepancia : 0) * IVA_TAXA;
     
     // --- PROJEÇÃO DE MERCADO ---
-    const omissaoPorMotorista = discrepancia; // Omissão da amostra
+    const omissaoPorMotorista = discrepancia; // Omissão da amostra (pode ser negativa)
     const valorOmitidoMensal = omissaoPorMotorista * motoristasAtivos;
     const valorOmitidoAnual = valorOmitidoMensal * MESES_ANO;
 
@@ -103,21 +118,22 @@ function calcularDiscrepancia() {
     // Resultados da Base Tributável
     document.getElementById('btfFinal').textContent = btf.toFixed(2) + ' €';
     
-    // Discrepância
+    // Discrepância (Amostra - permite negativo)
     document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
     
     // Percentagem de Omissão
     document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
     
-    // IVA Potencial Omitido
+    // IVA Potencial Omitido (só se discrepância > 0)
     document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
 
     // Projeção no Contexto de Mercado (Formatado para EUR)
     document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
     document.getElementById('omissaoPorMotorista').textContent = omissaoPorMotorista.toFixed(2) + ' €';
     
-    document.getElementById('valorOmitidoMensal').textContent = valorOmitidoMensal.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
-    document.getElementById('valorOmitidoAnual').textContent = valorOmitidoAnual.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+    // CORREÇÃO CRÍTICA: As projeções de mercado só podem ser positivas (omissão).
+    document.getElementById('valorOmitidoMensal').textContent = formatCurrency(valorOmitidoMensal);
+    document.getElementById('valorOmitidoAnual').textContent = formatCurrency(valorOmitidoAnual);
 }
 
 // --- Associações de Eventos (Otimizadas) ---
@@ -132,7 +148,7 @@ inputsOperacionais.forEach(id => {
 });
 
 // Coluna 2 e Contexto: Inputs Fiscais e Mercado (afetam Discrepância)
-const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'iva6', 'reverseCharge'];
+const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'viaturasAtivas', 'iva6', 'reverseCharge'];
 inputsDiscrepancia.forEach(id => {
     const element = document.getElementById(id);
     if (element) {
