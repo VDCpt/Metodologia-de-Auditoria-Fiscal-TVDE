@@ -15,25 +15,34 @@ function formatCurrency(value, allowNegative = false) {
     return finalValue.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
 }
 
+// --- Função para Atualizar o Nome do Ficheiro (CORRIGIDA) ---
+function updateFilenameTitle() {
+    const ano = document.getElementById('ano').value || 'AAAA';
+    const mes = document.getElementById('mes').value || 'MM';
+    
+    // Obter o texto do select da plataforma
+    const nomeEmpresaSelect = document.getElementById('nomeEmpresa');
+    const plataforma = nomeEmpresaSelect.value || 'PLATAFORMA'; 
+    
+    const idProcesso = document.getElementById('idProcesso').value || 'ID';
+    
+    const filenameElement = document.getElementById('filenameTitle');
+    
+    // Formato: AAAA_MM_PLATAFORMA_ID_ANALISE.pdf
+    filenameElement.innerText = `NOME DO FICHEIRO: ${ano}_${mes}_${plataforma}_${idProcesso}_ANALISE.pdf`;
+}
+
+
 function calcularBaseTributavelOperacional() {
     // --- Ganhos Brutos e Aditivos (Entrada do Motorista) ---
-    const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
-    // Os campos abaixo são lidos mas não usados no cálculo da BTOR
-    const campanhas = parseFloat(document.getElementById('campanhas').value) || 0;
-    const taxasCancelamento = parseFloat(document.getElementById('taxasCancelamento').value) || 0;
-    const gorjetasOperacionais = parseFloat(document.getElementById('gorjetasOperacionais').value) || 0;
-    const portagensOperacionais = parseFloat(document.getElementById('portagensOperacionais').value) || 0;
-    const taxasReservaOperacionaisBruto = parseFloat(document.getElementById('taxasReservaOperacionaisBruto').value) || 0;
-
-    // --- Deduções (Retenções da Plataforma - Base para a BTOR) ---
+    // Apenas a BTOR é calculada aqui; Ganhos Líquidos é input manual.
     const taxasReservaDeducoes = parseFloat(document.getElementById('taxasReservaDeducoes').value) || 0;
     const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
 
     // --- CÁLCULO BASE TRIBUTÁVEL OPERACIONAL RETIDA (BTOR) ---
-    // BTOR = Comissões Retidas + Taxas Retidas/Deduções que são consideradas "Serviços"
     const btor = comissaoPlataformaOperacionais + taxasReservaDeducoes;
 
-    // --- Ganhos Líquidos (AGORA É INPUT MANUAL - LÓGICA DE CÁLCULO REMOVIDA) ---
+    // --- Ganhos Líquidos (INPUT MANUAL) ---
     const ganhosLiquidos = parseFloat(document.getElementById('ganhosLiquidosInput').value) || 0;
 
     // Atualizar o HTML
@@ -81,20 +90,12 @@ function calcularDiscrepancia() {
 
 
     // --- Atualizar Resultados na Secção de Auditoria ---
-
-    // Resultados da Base Tributável
     document.getElementById('btfFinal').textContent = btf.toFixed(2) + ' €';
-    
-    // Discrepância (Amostra - permite negativo)
     document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
-    
-    // Percentagem de Omissão
     document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
-    
-    // IVA Potencial Omitido (só se discrepância > 0)
     document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
 
-    // Projeção no Contexto de Mercado (Formatado para EUR)
+    // Projeção no Contexto de Mercado
     document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
     document.getElementById('omissaoPorMotorista').textContent = omissaoAmostra.toFixed(2) + ' €';
     
@@ -127,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         autorInput.addEventListener('input', updateAuthor);
     }
     
-    // Define listeners para os campos de topo (apenas para exibição/impressão)
+    // Define listeners para os campos de topo (atualização de exibição e NOME DO FICHEIRO)
     const fieldsToMirror = ['nomeEmpresa', 'nifEmpresa', 'idProcesso', 'mes', 'ano'];
     fieldsToMirror.forEach(id => {
         const inputElement = document.getElementById(id);
@@ -136,11 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputElement && printElement) {
             const updateMirror = () => {
                 let value = inputElement.value;
-                // Para Selects, obter o texto
                 if (inputElement.tagName === 'SELECT') {
                     value = inputElement.options[inputElement.selectedIndex].text;
                 }
                 printElement.innerText = value;
+                
+                // CHAMA A FUNÇÃO DE NOMEAÇÃO AQUI
+                updateFilenameTitle(); 
             };
             inputElement.addEventListener('input', updateMirror);
             inputElement.addEventListener('change', updateMirror);
@@ -148,8 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. Inicialização dos Cálculos
+    // 2. Inicialização dos Cálculos e Nome do Ficheiro
     calcularBaseTributavelOperacional();
+    updateFilenameTitle(); // Assegurar que o nome do ficheiro é calculado logo no início
     
     // 3. Setup dos botões de Ação
     document.getElementById('calculateButton').addEventListener('click', calcularBaseTributavelOperacional);
@@ -180,7 +184,7 @@ inputsDiscrepancia.forEach(id => {
     }
 });
 
-// Também garantir que o resultado da BTF é atualizado se for introduzido manualmente
+// Atualizar resultado da BTF em tempo real
 document.getElementById('baseTributavelFaturada').addEventListener('input', () => {
     const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
     document.getElementById('btFaturadaResultado').textContent = btf.toFixed(2) + ' €';
