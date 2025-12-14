@@ -289,7 +289,7 @@
                 
                 <div class="input-group">
                     <label for="ganhosBrutos">Ganhos Brutos (€):</label>
-                    <input type="number" id="ganhosBrutos" value="1400">
+                    <input type="number" id="ganhosBrutos" value="1750">
                 </div>
                 <div class="input-group">
                     <label for="pagamentosApp">Pagamentos APP (€):</label>
@@ -301,7 +301,7 @@
                 </div>
                 <div class="input-group">
                     <label for="taxasCancelamento">Taxas de Cancelamento (€):</label>
-                    <input type="number" id="taxasCancelamento" value="0">
+                    <input type="number" id="taxasCancelamento" value="18.60">
                 </div>
                 <div class="input-group">
                     <label for="gorjetasOperacionais">Gorjetas (€):</label>
@@ -309,7 +309,7 @@
                 </div>
                 <div class="input-group">
                     <label for="portagensOperacionais">Portagens (€):</label>
-                    <input type="number" id="portagensOperacionais" value="10">
+                    <input type="number" id="portagensOperacionais" value="0">
                 </div>
                 <div class="input-group">
                     <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (Bruto) (€):</label>
@@ -319,22 +319,22 @@
                 <h4>Deduções operacionais</h4>
                 <div class="input-group">
                     <label for="taxasReservaDeducoes">Taxas de Reserva (€):</label>
-                    <input type="number" id="taxasReservaDeducoes" value="20">
+                    <input type="number" id="taxasReservaDeducoes" value="20.74">
                 </div>
                 <div class="input-group">
                     <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
-                    <input type="number" id="comissaoPlataformaOperacionais" value="380">
+                    <input type="number" id="comissaoPlataformaOperacionais" value="400">
                 </div>
                 
                 <div class="result-group" style="background-color: #e6f7ff;">
                     <label>Ganhos Líquidos (Estimativa) (€):</label>
-                    <strong id="ganhosLiquidosResultado">1010.00 €</strong>
+                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
                 </div>
 
                 <div class="result-group">
                     <label>Base Tributável Operacional Retida (BTOR):</label>
-                    <strong id="btOperacionalResultado">400.00 €</strong>
-                    <input type="hidden" id="baseTributavelOperacional" value="400">
+                    <strong id="btOperacionalResultado">0.00 €</strong>
+                    <input type="hidden" id="baseTributavelOperacional" value="0">
                 </div>
             </div>
 
@@ -343,7 +343,7 @@
                 
                 <div class="input-group">
                     <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
-                    <input type="number" id="baseTributavelFaturada" value="800">
+                    <input type="number" id="baseTributavelFaturada" value="0">
                 </div>
 
                 <div class="input-group">
@@ -364,7 +364,7 @@
                 
                 <div class="result-group" style="background-color: #fffbe6;">
                     <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
-                    <strong id="btFaturadaResultado">800.00 €</strong>
+                    <strong id="btFaturadaResultado">0.00 €</strong>
                 </div>
             </div>
         </div>
@@ -388,22 +388,22 @@
             <h3>BASE TRIBUTÁVEL (Amostra do Mês)</h3>
             <div class="result-group">
                 <label>Total Base Tributável Operacional Retida (BTOR):</label>
-                <strong id="btorFinal">400.00 €</strong>
+                <strong id="btorFinal">0.00 €</strong>
             </div>
             <div class="result-group">
                 <label>Base Tributável Faturada (BTF):</label>
-                <strong id="btfFinal">800.00 €</strong>
+                <strong id="btfFinal">0.00 €</strong>
             </div>
 
             <br>
 
             <h3>DISCREPANCIA (Omissão) da BASE TRIBUTÁVEL:</h3>
             <div class="discrepancy">
-                <span id="discrepanciaResultado">-400.00 €</span>
+                <span id="discrepanciaResultado">0.00 €</span>
             </div>
               <div class="result-group">
                 <label>Percentagem de omissão (sobre o Operacional):</label>
-                <strong id="percentagemOmissao">-100.00 %</strong>
+                <strong id="percentagemOmissao">0.00 %</strong>
             </div>
             
             <div class="result-group">
@@ -411,7 +411,7 @@
                 <strong id="ivaPotencialResultado">0.00 €</strong>
             </div>
             
-            <p>Se esta omissão (<span id="omissaoPorMotorista">-400.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">38,638</span>), o potencial valor omitido seria vasto:</p>
+            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">38,638</span>), o potencial valor omitido seria vasto:</p>
             
             <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0,00 €</strong></p>
             <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0,00 €</strong></p>
@@ -438,6 +438,7 @@
         // Constante para o IVA (6%)
         const IVA_TAXA = 0.06;
         const MESES_ANO = 12;
+        const DEFAULT_MOTORISTAS = 38638; // Valor padrão fixo
 
         // Função para atualizar o nome do ficheiro sugerido no cabeçalho
         function updateFilename() {
@@ -551,10 +552,9 @@
             const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
             const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
             
-            // Leitura e fallback dos motoristas ativos
+            // CORREÇÃO FINAL: Usar o valor do input, fallback para o atributo value do HTML, e finalmente o valor default.
             const motoristasAtivosInput = document.getElementById('motoristasAtivos').value;
-            const motoristasAtivosDefault = 38638;
-            const motoristasAtivos = parseFloat(motoristasAtivosInput) || motoristasAtivosDefault;
+            const motoristasAtivos = parseFloat(motoristasAtivosInput) || parseFloat(document.getElementById('motoristasAtivos').getAttribute('value')) || DEFAULT_MOTORISTAS;
 
             // --- CÁLCULO DA DISCREPÂNCIA ---
             const discrepancia = btor - btf;
@@ -587,7 +587,7 @@
             document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
             
             const formatCurrency = (value) => {
-                // A omissão potencial no mercado é 0 se a discrepância for negativa
+                // A omissão potencial no mercado (projeção) é 0 se a discrepância for negativa
                 return (Math.max(0, value)).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
             };
             
@@ -620,17 +620,13 @@
         inputsDiscrepancia.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
+                // Ao alterar qualquer um destes, recalcula a discrepância e projeção
                 element.addEventListener('input', calcularDiscrepancia);
-                element.addEventListener('change', calcularDiscrepancia); // Para selects
+                element.addEventListener('change', calcularDiscrepancia); 
             }
         });
 
-        // Atualizar o resultado da BTF ao inserir
-        document.getElementById('baseTributavelFaturada').addEventListener('input', () => {
-            const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
-            document.getElementById('btFaturadaResultado').textContent = btf.toFixed(2) + ' €';
-            calcularDiscrepancia();
-        });
+        // O cálculo inicial é chamado pelo 'DOMContentLoaded' e por calcularBaseTributavelOperacional, que chama calcularDiscrepancia
 
     </script>
     </body>
