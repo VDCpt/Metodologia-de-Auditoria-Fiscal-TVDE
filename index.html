@@ -179,14 +179,14 @@
                 max-width: 100%;
                 width: 100%;
                 margin: 0;
-                padding: 20px; /* Aumenta a margem do documento A4 (ajuste conforme necessário) */
+                padding: 20px; 
                 box-shadow: none;
                 box-sizing: border-box; 
             }
 
             /* 2. CORREÇÃO DEFINITIVA: Forçar a quebra de linha total */
             .columns-container {
-                display: block; /* ESSENCIAL: Desativa o flex para impressão (força o empilhamento) */
+                display: block; 
                 width: 100%;
                 gap: 0; 
                 margin-top: 15px;
@@ -421,217 +421,19 @@
         <div class="auth-section">
             <p><strong>Autenticação do Documento Analítico</strong></p>
             <div class="signature-box">
-                Espaço para Assinatura Digital / Scanned
+                Assinatura Digital / Assinatura - Carimbo
             </div>
             <p>___________________________________</p>
             <p id="autorAssinatura">[INSIRA O NOME]</p>
             <p>Autor da Metodologia e Análise</p>
         </div>
         <div class="button-container">
-            <button class="action-button calculate" onclick="calcularDiscrepancia()">Calcular / Atualizar</button>
-            <button class="action-button" onclick="imprimirRelatorio()">Imprimir / Gerar PDF (Documento Analítico)</button>
+            <button class="action-button calculate">Calcular / Atualizar</button>
+            <button class="action-button">Imprimir / Gerar PDF (Documento Analítico)</button>
         </div>
 
     </div>
-
-    <script>
-        // Constante para o IVA (6%)
-        const IVA_TAXA = 0.06;
-        const MESES_ANO = 12;
-        const DEFAULT_MOTORISTAS = 38638; // Valor padrão fixo
-
-        // Função para atualizar o nome do ficheiro sugerido no cabeçalho
-        function updateFilename() {
-            const nomeEmpresaSelect = document.getElementById('nomeEmpresa');
-            const idProcessoInput = document.getElementById('idProcesso');
-            const mesInput = document.getElementById('mes');
-            const anoInput = document.getElementById('ano');
-
-            const ano = anoInput.value || 'AAAA';
-            const mes = (mesInput.value || 'MM').toUpperCase();
-            const plataforma = nomeEmpresaSelect.value || 'PLATAFORMA';
-            const idProcesso = (idProcessoInput.value || 'ID').toUpperCase().replace(/[^A-Z0-9]/g, ''); 
-            
-            const filename = `${ano}_${mes}_${plataforma.toUpperCase()}_${idProcesso}_ANALISE.pdf`;
-            document.getElementById('filenameTitle').textContent = `NOME DO FICHEIRO: ${filename}`;
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Campos de referência
-            const nomeEmpresaSelect = document.getElementById('nomeEmpresa');
-            const nifEmpresaInput = document.getElementById('nifEmpresa');
-            const idProcessoInput = document.getElementById('idProcesso');
-            const mesInput = document.getElementById('mes');
-            const anoInput = document.getElementById('ano');
-            const autorInput = document.getElementById('autor');
-            const dataEmissaoInput = document.getElementById('dataEmissao');
-            const today = new Date().toISOString().split('T')[0];
-            
-            // 1. Inicialização e Listeners de Data/Autor
-            if (dataEmissaoInput) {
-                dataEmissaoInput.value = today;
-                document.getElementById('dataEmissaoPrint').innerText = today;
-            }
-
-            if (autorInput) {
-                const autorNome = autorInput.value || "[INSIRA O NOME]";
-                document.getElementById('autorPrint').innerText = autorNome;
-                document.getElementById('autorAssinatura').innerText = autorNome;
-                autorInput.addEventListener('input', () => {
-                    const novoNome = autorInput.value || "[INSIRA O NOME]";
-                    document.getElementById('autorPrint').innerText = novoNome;
-                    document.getElementById('autorAssinatura').innerText = novoNome;
-                });
-            }
-
-            // 2. Listeners para Campos do Cabeçalho (Empresa, NIF, ID, Mês, Ano)
-            nomeEmpresaSelect.addEventListener('change', (e) => {
-                document.getElementById('nomeEmpresaPrint').innerText = e.target.value;
-                updateFilename();
-            });
-            nifEmpresaInput.addEventListener('input', (e) => {
-                document.getElementById('nifEmpresaPrint').innerText = e.target.value;
-            });
-            
-            idProcessoInput.addEventListener('input', (e) => {
-                document.getElementById('idProcessoPrint').innerText = e.target.value;
-                updateFilename();
-            });
-            
-            mesInput.addEventListener('input', (e) => {
-                document.getElementById('mesPrint').innerText = e.target.value;
-                updateFilename();
-            });
-            anoInput.addEventListener('input', (e) => {
-                document.getElementById('anoPrint').innerText = e.target.value;
-                updateFilename();
-            });
-
-            // 3. Inicialização do nome do ficheiro (com os valores por defeito/limpos)
-            document.getElementById('nomeEmpresaPrint').innerText = nomeEmpresaSelect.value;
-            updateFilename();
-            
-            // 4. Ativa o cálculo inicial
-            calcularBaseTributavelOperacional();
-        });
-
-
-        // 1. Cálculo da Base Tributável Operacional Retida (BTOR) e Ganhos Líquidos
-        function calcularBaseTributavelOperacional() {
-            // --- Ganhos Brutos e Aditivos (Entrada do Motorista) ---
-            const ganhosBrutos = parseFloat(document.getElementById('ganhosBrutos').value) || 0;
-            const campanhas = parseFloat(document.getElementById('campanhas').value) || 0;
-            const taxasCancelamento = parseFloat(document.getElementById('taxasCancelamento').value) || 0;
-            const gorjetasOperacionais = parseFloat(document.getElementById('gorjetasOperacionais').value) || 0;
-            const portagensOperacionais = parseFloat(document.getElementById('portagensOperacionais').value) || 0;
-
-            // --- Deduções (Retenções da Plataforma - Base para a BTOR) ---
-            const taxasReservaDeducoes = parseFloat(document.getElementById('taxasReservaDeducoes').value) || 0;
-            const comissaoPlataformaOperacionais = parseFloat(document.getElementById('comissaoPlataformaOperacionais').value) || 0;
-
-            // --- CÁLCULO BASE TRIBUTÁVEL OPERACIONAL RETIDA (BTOR) ---
-            const btor = comissaoPlataformaOperacionais + taxasReservaDeducoes;
-
-            // --- CÁLCULO Ganhos Líquidos (Apenas informativo) ---
-            const ganhosLiquidos = 
-                ganhosBrutos - comissaoPlataformaOperacionais - taxasReservaDeducoes + 
-                campanhas + taxasCancelamento + gorjetasOperacionais + portagensOperacionais;
-                
-            // Atualizar o HTML
-            document.getElementById('ganhosLiquidosResultado').textContent = ganhosLiquidos.toFixed(2) + ' €';
-            document.getElementById('btOperacionalResultado').textContent = btor.toFixed(2) + ' €';
-            document.getElementById('baseTributavelOperacional').value = btor;
-            document.getElementById('btorFinal').textContent = btor.toFixed(2) + ' €';
-
-            calcularDiscrepancia();
-        }
-
-        // 2. Cálculo da Discrepância e Projeção Fiscal
-        function calcularDiscrepancia() {
-            const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
-            const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
-            
-            // CORREÇÃO FINAL: Usar o valor do input, fallback para o atributo value do HTML, e finalmente o valor default.
-            const motoristasAtivosInput = document.getElementById('motoristasAtivos').value;
-            const motoristasAtivos = parseFloat(motoristasAtivosInput) || parseFloat(document.getElementById('motoristasAtivos').getAttribute('value')) || DEFAULT_MOTORISTAS;
-
-            // --- CÁLCULO DA DISCREPÂNCIA ---
-            const discrepancia = btor - btf;
-            
-            // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
-            let percentagemOmissao = 0;
-            if (btor !== 0) {
-                // A percentagem deve usar o valor absoluto da discrepância se a intenção for mostrar a magnitude
-                // Mas, mantemos a discrepância com sinal para refletir se é omissão (+ ) ou excesso (-).
-                percentagemOmissao = (discrepancia / btor) * 100;
-            }
-            
-            // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
-            // O IVA potencial só é calculado se houver uma omissão (discrepancia > 0)
-            const ivaPotencial = (discrepancia > 0 ? discrepancia : 0) * IVA_TAXA;
-            
-            // --- PROJEÇÃO DE MERCADO ---
-            const omissaoPorMotorista = discrepancia; 
-            const valorOmitidoMensal = omissaoPorMotorista * motoristasAtivos;
-            const valorOmitidoAnual = valorOmitidoMensal * MESES_ANO;
-
-
-            // --- Atualizar Resultados na Secção de Auditoria ---
-            document.getElementById('btfFinal').textContent = btf.toFixed(2) + ' €';
-            document.getElementById('discrepanciaResultado').textContent = discrepancia.toFixed(2) + ' €';
-            document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
-            document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
-
-            // ATUALIZAÇÃO: Garantir que a Discrepância (mesmo que negativa) é apresentada no contexto
-            document.getElementById('omissaoPorMotorista').textContent = discrepancia.toFixed(2) + ' €';
-            
-            // Apresentar Motoristas Ativos formatado
-            document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
-            
-            const formatCurrency = (value) => {
-                // CORREÇÃO: A omissão potencial no mercado (projeção) é 0 se a discrepância por motorista for negativa.
-                // Usamos Math.max(0, ...) para garantir que os valores projetados de omissão são sempre não-negativos.
-                return (Math.max(0, value)).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
-            };
-            
-            // Os campos finais de omissão potencial (só podem ser > 0)
-            document.getElementById('valorOmitidoMensal').textContent = formatCurrency(valorOmitidoMensal);
-            document.getElementById('valorOmitidoAnual').textContent = formatCurrency(valorOmitidoAnual);
-        }
-
-        // Função para imprimir o relatório
-        function imprimirRelatorio() {
-            const filenameText = document.getElementById('filenameTitle').textContent.replace('NOME DO FICHEIRO: ', '');
-            alert(`Atenção: Por favor, salve o ficheiro PDF gerado com o nome sugerido:\n\n${filenameText}`);
-            window.print();
-        }
-
-
-        // --- Associações de Eventos (Otimizadas) ---
-
-        // Coluna 1: Inputs Operacionais (afetam BTOR)
-        const inputsOperacionais = ['ganhosBrutos', 'pagamentosApp', 'campanhas', 'taxasCancelamento', 'gorjetasOperacionais', 'portagensOperacionais', 'taxasReservaOperacionaisBruto', 'taxasReservaDeducoes', 'comissaoPlataformaOperacionais'];
-        inputsOperacionais.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.addEventListener('input', calcularBaseTributavelOperacional);
-            }
-        });
-
-        // Coluna 2 e Contexto: Inputs Fiscais e Mercado (afetam Discrepância)
-        const inputsDiscrepancia = ['baseTributavelFaturada', 'motoristasAtivos', 'viaturasAtivas', 'iva6', 'reverseCharge'];
-        inputsDiscrepancia.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                // Ao alterar qualquer um destes, recalcula a discrepância e projeção
-                element.addEventListener('input', calcularDiscrepancia);
-                element.addEventListener('change', calcularDiscrepancia); 
-            }
-        });
-
-        // O cálculo inicial é chamado pelo 'DOMContentLoaded' e por calcularBaseTributavelOperacional, que chama calcularDiscrepancia
-
-    </script>
+    
+    <script src="script.js"></script>
     </body>
 </html>
