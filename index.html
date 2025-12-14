@@ -242,7 +242,7 @@
                 <span id="nomeEmpresaPrint" style="display: none;">Uber</span>
             </div>
             <div class="input-group">
-                <label for="nifEmpresa">NIPC da Plataforma (Sede Estrangeira):</label>
+                <label for="nifEmpresa">NIF da Plataforma (Sede Estrangeira):</label>
                 <input type="text" id="nifEmpresa" value="">
                 <span id="nifEmpresaPrint" style="display: none;"></span>
             </div>
@@ -289,52 +289,52 @@
                 
                 <div class="input-group">
                     <label for="ganhosBrutos">Ganhos Brutos (€):</label>
-                    <input type="number" id="ganhosBrutos" value="">
+                    <input type="number" id="ganhosBrutos" value="1400">
                 </div>
                 <div class="input-group">
                     <label for="pagamentosApp">Pagamentos APP (€):</label>
-                    <input type="number" id="pagamentosApp" value="">
+                    <input type="number" id="pagamentosApp" value="0">
                 </div>
                 <div class="input-group">
                     <label for="campanhas">Campanhas (€):</label>
-                    <input type="number" id="campanhas" value="">
+                    <input type="number" id="campanhas" value="0">
                 </div>
                 <div class="input-group">
                     <label for="taxasCancelamento">Taxas de Cancelamento (€):</label>
-                    <input type="number" id="taxasCancelamento" value="">
+                    <input type="number" id="taxasCancelamento" value="0">
                 </div>
                 <div class="input-group">
                     <label for="gorjetasOperacionais">Gorjetas (€):</label>
-                    <input type="number" id="gorjetasOperacionais" value="">
+                    <input type="number" id="gorjetasOperacionais" value="0">
                 </div>
                 <div class="input-group">
                     <label for="portagensOperacionais">Portagens (€):</label>
-                    <input type="number" id="portagensOperacionais" value="">
+                    <input type="number" id="portagensOperacionais" value="10">
                 </div>
                 <div class="input-group">
                     <label for="taxasReservaOperacionaisBruto">Taxas de Reserva (Bruto) (€):</label>
-                    <input type="number" id="taxasReservaOperacionaisBruto" value="">
+                    <input type="number" id="taxasReservaOperacionaisBruto" value="0">
                 </div>
                 
                 <h4>Deduções operacionais</h4>
                 <div class="input-group">
                     <label for="taxasReservaDeducoes">Taxas de Reserva (€):</label>
-                    <input type="number" id="taxasReservaDeducoes" value="">
+                    <input type="number" id="taxasReservaDeducoes" value="20">
                 </div>
                 <div class="input-group">
                     <label for="comissaoPlataformaOperacionais">Comissão da Plataforma (Retida) (€):</label>
-                    <input type="number" id="comissaoPlataformaOperacionais" value="">
+                    <input type="number" id="comissaoPlataformaOperacionais" value="380">
                 </div>
                 
                 <div class="result-group" style="background-color: #e6f7ff;">
                     <label>Ganhos Líquidos (Estimativa) (€):</label>
-                    <strong id="ganhosLiquidosResultado">0.00 €</strong>
+                    <strong id="ganhosLiquidosResultado">1010.00 €</strong>
                 </div>
 
                 <div class="result-group">
                     <label>Base Tributável Operacional Retida (BTOR):</label>
-                    <strong id="btOperacionalResultado">0.00 €</strong>
-                    <input type="hidden" id="baseTributavelOperacional" value="0">
+                    <strong id="btOperacionalResultado">400.00 €</strong>
+                    <input type="hidden" id="baseTributavelOperacional" value="400">
                 </div>
             </div>
 
@@ -343,7 +343,7 @@
                 
                 <div class="input-group">
                     <label for="baseTributavelFaturada">Valor da Comissão (BASE TRIBUTÁVEL) Faturado (€):</label>
-                    <input type="number" id="baseTributavelFaturada" value="">
+                    <input type="number" id="baseTributavelFaturada" value="800">
                 </div>
 
                 <div class="input-group">
@@ -364,7 +364,7 @@
                 
                 <div class="result-group" style="background-color: #fffbe6;">
                     <label>BASE TRIBUTÁVEL Faturada (BTF):</label>
-                    <strong id="btFaturadaResultado">0.00 €</strong>
+                    <strong id="btFaturadaResultado">800.00 €</strong>
                 </div>
             </div>
         </div>
@@ -388,22 +388,22 @@
             <h3>BASE TRIBUTÁVEL (Amostra do Mês)</h3>
             <div class="result-group">
                 <label>Total Base Tributável Operacional Retida (BTOR):</label>
-                <strong id="btorFinal">0.00 €</strong>
+                <strong id="btorFinal">400.00 €</strong>
             </div>
             <div class="result-group">
                 <label>Base Tributável Faturada (BTF):</label>
-                <strong id="btfFinal">0.00 €</strong>
+                <strong id="btfFinal">800.00 €</strong>
             </div>
 
             <br>
 
             <h3>DISCREPANCIA (Omissão) da BASE TRIBUTÁVEL:</h3>
             <div class="discrepancy">
-                <span id="discrepanciaResultado">0.00 €</span>
+                <span id="discrepanciaResultado">-400.00 €</span>
             </div>
               <div class="result-group">
                 <label>Percentagem de omissão (sobre o Operacional):</label>
-                <strong id="percentagemOmissao">0.00 %</strong>
+                <strong id="percentagemOmissao">-100.00 %</strong>
             </div>
             
             <div class="result-group">
@@ -411,17 +411,17 @@
                 <strong id="ivaPotencialResultado">0.00 €</strong>
             </div>
             
-            <p>Se esta omissão (<span id="omissaoPorMotorista">0.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">38.638</span>), o potencial valor omitido seria vasto:</p>
+            <p>Se esta omissão (<span id="omissaoPorMotorista">-400.00 €</span>) fosse a média mensal por **Motoristas Ativos** (<span id="motoristasAtivosContexto">38,638</span>), o potencial valor omitido seria vasto:</p>
             
-            <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0.00 €</strong></p>
-            <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0.00 €</strong></p>
+            <p style="font-size: 1.1em; margin-top: 10px;">Potencial Omissão Mensal no Mercado: <strong id="valorOmitidoMensal">0,00 €</strong></p>
+            <p style="font-size: 1.1em;">Potencial Omissão Anual no Mercado: <strong id="valorOmitidoAnual">0,00 €</strong></p>
 
         </div>
         
         <div class="auth-section">
             <p><strong>Autenticação do Documento Analítico</strong></p>
             <div class="signature-box">
-                Assinatura Digital / Assinatura e Carimbo
+                Espaço para Assinatura Digital / Scanned
             </div>
             <p>___________________________________</p>
             <p id="autorAssinatura">[INSIRA O NOME]</p>
@@ -551,10 +551,10 @@
             const btor = parseFloat(document.getElementById('baseTributavelOperacional').value) || 0;
             const btf = parseFloat(document.getElementById('baseTributavelFaturada').value) || 0;
             
-            // CORREÇÃO CRÍTICA AQUI: Usar || 1 para evitar divisão por zero/multiplicação por NaN
+            // Leitura e fallback dos motoristas ativos
             const motoristasAtivosInput = document.getElementById('motoristasAtivos').value;
-            // Garante que se o campo estiver vazio, usa o valor padrão 38638, senão usa o valor inserido ou 1 (para evitar multiplicação por 0/NaN se o usuário apagar tudo)
-            const motoristasAtivos = parseFloat(motoristasAtivosInput) || parseFloat(document.getElementById('motoristasAtivos').defaultValue) || 1; 
+            const motoristasAtivosDefault = 38638;
+            const motoristasAtivos = parseFloat(motoristasAtivosInput) || motoristasAtivosDefault;
 
             // --- CÁLCULO DA DISCREPÂNCIA ---
             const discrepancia = btor - btf;
@@ -562,17 +562,14 @@
             // --- CÁLCULO DA PERCENTAGEM DE OMISSÃO ---
             let percentagemOmissao = 0;
             if (btor !== 0) {
-                // Cálculo da percentagem
                 percentagemOmissao = (discrepancia / btor) * 100;
             }
             
             // --- CÁLCULO DO IVA POTENCIAL OMITIDO ---
-            // Apenas calcula IVA se houver omissão positiva
             const ivaPotencial = (discrepancia > 0 ? discrepancia : 0) * IVA_TAXA;
             
             // --- PROJEÇÃO DE MERCADO ---
             const omissaoPorMotorista = discrepancia; 
-            // O cálculo da projeção agora usa motoristasAtivos garantidamente > 0
             const valorOmitidoMensal = omissaoPorMotorista * motoristasAtivos;
             const valorOmitidoAnual = valorOmitidoMensal * MESES_ANO;
 
@@ -583,16 +580,18 @@
             document.getElementById('percentagemOmissao').textContent = percentagemOmissao.toFixed(2) + ' %';
             document.getElementById('ivaPotencialResultado').textContent = ivaPotencial.toFixed(2) + ' €';
 
-            // Projeção no Contexto de Mercado (Formatado para EUR)
-            // Usamos o valor inserido (ou o default 38.638) para o contexto
+            // ATUALIZAÇÃO: Garantir que a Discrepância (mesmo que negativa) é apresentada no contexto
+            document.getElementById('omissaoPorMotorista').textContent = discrepancia.toFixed(2) + ' €';
+            
+            // Apresentar Motoristas Ativos formatado
             document.getElementById('motoristasAtivosContexto').textContent = motoristasAtivos.toLocaleString('pt-PT');
-            document.getElementById('omissaoPorMotorista').textContent = omissaoPorMotorista.toFixed(2) + ' €';
             
             const formatCurrency = (value) => {
-                // Se for um valor negativo (o cliente faturou a mais), apresenta 0 € para a omissão potencial.
+                // A omissão potencial no mercado é 0 se a discrepância for negativa
                 return (Math.max(0, value)).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
             };
             
+            // Os campos finais de omissão potencial (só podem ser > 0)
             document.getElementById('valorOmitidoMensal').textContent = formatCurrency(valorOmitidoMensal);
             document.getElementById('valorOmitidoAnual').textContent = formatCurrency(valorOmitidoAnual);
         }
